@@ -1,5 +1,8 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <iostream>
+using namespace std;
 
 struct myDataType {
     char ch;
@@ -7,9 +10,9 @@ struct myDataType {
 };
 
 void run();
-int check(char sym[21],char ch,int count);
-struct myDataType inputValue(char sym[21],int count);
-void Display(char sym[21]);
+int check(char symbol[21],char ch,int count);
+struct myDataType inputValue(char symbol[21],int count);
+void Display(string symbol[21]);
 
 int main(){
     char reStart;
@@ -29,33 +32,33 @@ int main(){
 void run(){
     int count = 0;
     struct myDataType info;
-    char symbol[21] = {'01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21'};
+    string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"};
     Display(symbol);
-    again:
-    info = inputValue(symbol,count);
-    symbol[info.i] = info.ch;
-    system("clear");
-    Display(symbol);
-    if(check(symbol,info.ch,count)==1);
-    else{
-        count++;
-        goto again;
-    }
+    // again:
+    // info = inputValue(symbol,count);
+    // symbol[info.i] = info.ch;
+    // system("clear");
+    // Display(symbol);
+    // if(check(symbol,info.ch,count)==1);
+    // else{
+    //     count++;
+    //     goto again;
+    // }
 }
-int check(char sym[21],char ch,int count){   //**** check for 21positions later ****//
+int check(char symbol[21],char ch,int count){   //**** check for 21positions later ****//
     int i;
     for(i = 0;i<=6; i+=3)//it's for row
-        if(sym[i] == ch && sym[i+1]==ch&&sym[i+2]==ch){
+        if(symbol[i] == ch && symbol[i+1]==ch&&symbol[i+2]==ch){
             printf("\nthe Winner is : %c",ch);return 1;
         }
     for(i = 0;i<3; i++)//it's for column
-        if(sym[i]==ch && sym[i+3]==ch&&sym[i+6]==ch){
+        if(symbol[i]==ch && symbol[i+3]==ch&&symbol[i+6]==ch){
             printf("\nthe Winner is : %c",ch);return 1;
         }
-    if(sym[0]==ch && sym[4]==ch&&sym[8]==ch){
+    if(symbol[0]==ch && symbol[4]==ch&&symbol[8]==ch){
             printf("\nthe Winner is : %c",ch);return 1;
         }
-    else if(sym[2]==ch && sym[4]==ch && sym[6]==ch){
+    else if(symbol[2]==ch && symbol[4]==ch && symbol[6]==ch){
             printf("\nthe Winner is : %c",ch);return 1;
         }
     else if(count==8){
@@ -63,7 +66,7 @@ int check(char sym[21],char ch,int count){   //**** check for 21positions later 
         return 1;
     }else return 0;
 }
-struct myDataType inputValue(char sym[21],int count){    //**** check for 21positions later ****//
+struct myDataType inputValue(char symbol[21],int count){    //**** check for 21positions later ****//
     char value;
     int i;
     struct myDataType info;
@@ -76,7 +79,7 @@ struct myDataType inputValue(char sym[21],int count){    //**** check for 21posi
     scanf("%s",&value);
     for(i=0;i<9;i++){
 
-        if(value == sym[i]){
+        if(value == symbol[i]){
             info.i = i;
             if(count%2 == 0)
                 info.ch = 'W';
@@ -95,26 +98,31 @@ struct myDataType inputValue(char sym[21],int count){    //**** check for 21posi
     return info;
 }
 
-void Display(char sym[21]){
+void Display(string symbol[21]){
 	system("clear"); // different console command may vary
-	printf("======================================================================\n");
-	printf("\t\t\t      Nine Men's Morris Game Variant-B");
-        printf("\n======================================================================");
-	printf("\nPlayers 1 Symbol: [White](W)");
-	printf("\nPlayers 2 Symbol: [Black](B)");
+
+    // cout << symbol[0] << endl;
+    // printf("%s\n",symbol[0].c_str());     
+    // ### Note that printf expect char*, not string, have to use .c_str() or .data() to extract, otherwise wrong result
+
+	printf("=====================================================================================\n");
+	printf("\t\t         Nine Men's Morris Game Variant-B");
+    printf("\n=====================================================================================");
+	printf("\nPlayers 1 symbol: [White](W)");
+	printf("\nPlayers 2 symbol: [Black](B)");
 	printf("\n\t\t\t");
-	printf("\n\t\t\t%c-------------%c-------------%c",sym[18],sym[19],sym[20]);
+	printf("\n\t\t\t%s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
 	printf("\n\t\t\t |              |              |");
-	printf("\n\t\t\t |   %c--------%c--------%c    |",sym[15],sym[16],sym[17]);
+	printf("\n\t\t\t |   %s--------%s--------%s    |",symbol[15].c_str(),symbol[16].c_str(),symbol[17].c_str());
 	printf("\n\t\t\t |    |         |         |    |");
-	printf("\n\t\t\t |    |   %c---%c---%c    |    |",sym[12],sym[13],sym[14]);
+	printf("\n\t\t\t |    |   %s---%s---%s    |    |",symbol[12].c_str(),symbol[13].c_str(),symbol[14].c_str());
 	printf("\n\t\t\t |    |    |         |    |    |");
-   	printf("\n\t\t\t%c---%c---%c        %c---%c---%c",sym[6],sym[7],sym[8],sym[9],sym[10],sym[11]);
+   	printf("\n\t\t\t%s---%s---%s        %s---%s---%s",symbol[6].c_str(),symbol[7].c_str(),symbol[8].c_str(),symbol[9].c_str(),symbol[10].c_str(),symbol[11].c_str());
 	printf("\n\t\t\t |    |    |         |    |    |");
-	printf("\n\t\t\t |    |   %c--------%c    |    |",sym[4],sym[5]);
+	printf("\n\t\t\t |    |   %s--------%s    |    |",symbol[4].c_str(),symbol[5].c_str());
 	printf("\n\t\t\t |    | /                 |    |");
-	printf("\n\t\t\t |    %c-----------------%c    |",sym[2],sym[3]);
+	printf("\n\t\t\t |    %s-----------------%s    |",symbol[2].c_str(),symbol[3].c_str());
     printf("\n\t\t\t |  /                          |");
-	printf("\n\t\t\t%c----------------------------%c",sym[0],sym[1]);
+	printf("\n\t\t\t%s----------------------------%s",symbol[0].c_str(),symbol[1].c_str());
 }
 
