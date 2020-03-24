@@ -4,87 +4,112 @@
 #include <iostream>
 using namespace std;
 
-struct myDataType {
-    char ch;
+struct inputData {
+    string ch;
     int i;
 };
 
 void run();
-int check(char symbol[21],char ch,int count);
-struct myDataType inputValue(char symbol[21],int count);
-void Display(string symbol[21]);
+int check(string symbol[21],string ch,int count);
+struct inputData inputValue(string symbol[21],int count);
+void displayGameBoard(string symbol[21]);
 
 int main(){
-    char reStart;
-    again:
+    
+    // start or restart
+    char restartGame;
+    continueLoop:
+
+    // run game
 	run();
-	printf("\n\nIf You Want To Play Again Press '1', Else press 'Any'\n\n(Press Your Choice ...)");
-	scanf("%s",&reStart);
-	if(reStart == '1')
-        {
-            system("clear");
-            goto again;
-        }
-    else
-        exit(0);
+
+    // after finish running the game, ask player whether to continue
+	printf("\n\nIf You Want To Play Again Press 'Y', Else press 'Any'\n\n(Press Your Choice ...)");
+	scanf("%s",&restartGame);
+	if(restartGame == 'Y' || restartGame == 'y'){
+        system("clear");
+        goto continueLoop;
+    }
+    else exit(0);
 }
 
 void run(){
+    // initialize count, info, symbol arr
     int count = 0;
-    struct myDataType info;
+    struct inputData info;
     string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"};
-    Display(symbol);
-    // again:
-    // info = inputValue(symbol,count);
-    // symbol[info.i] = info.ch;
-    // system("clear");
-    // Display(symbol);
-    // if(check(symbol,info.ch,count)==1);
-    // else{
-    //     count++;
-    //     goto again;
-    // }
+    
+    // display the gameboard
+    displayGameBoard(symbol);
+
+    // continueLoop point, ask for input
+    continueLoop:
+    info = inputValue(symbol,count);
+    symbol[info.i] = info.ch;
+    system("clear");
+    
+    // display the gameboard
+    displayGameBoard(symbol);
+    if(check(symbol,info.ch,count)==1){
+        // do nothing, not go back to continueLoop
+    }
+    else{
+        count++;
+        goto continueLoop;
+    }
 }
-int check(char symbol[21],char ch,int count){   //**** check for 21positions later ****//
-    int i;
-    for(i = 0;i<=6; i+=3)//it's for row
-        if(symbol[i] == ch && symbol[i+1]==ch&&symbol[i+2]==ch){
-            printf("\nthe Winner is : %c",ch);return 1;
-        }
-    for(i = 0;i<3; i++)//it's for column
-        if(symbol[i]==ch && symbol[i+3]==ch&&symbol[i+6]==ch){
-            printf("\nthe Winner is : %c",ch);return 1;
-        }
-    if(symbol[0]==ch && symbol[4]==ch&&symbol[8]==ch){
-            printf("\nthe Winner is : %c",ch);return 1;
-        }
-    else if(symbol[2]==ch && symbol[4]==ch && symbol[6]==ch){
-            printf("\nthe Winner is : %c",ch);return 1;
-        }
-    else if(count==8){
-        printf("\nthe Game is DRAW");
-        return 1;
-    }else return 0;
+
+int check(string symbol[21],string ch,int count){
+    // int i;
+    // for(i = 0;i<=6; i+=3)//it's for row
+    //     if(symbol[i] == ch && symbol[i+1]==ch&&symbol[i+2]==ch){
+    //         printf("\nthe Winner is : %c",ch);return 1;
+    //     }
+    // for(i = 0;i<3; i++)//it's for column
+    //     if(symbol[i]==ch && symbol[i+3]==ch&&symbol[i+6]==ch){
+    //         printf("\nthe Winner is : %c",ch);return 1;
+    //     }
+    // if(symbol[0]==ch && symbol[4]==ch&&symbol[8]==ch){
+    //         printf("\nthe Winner is : %c",ch);return 1;
+    //     }
+    // else if(symbol[2]==ch && symbol[4]==ch && symbol[6]==ch){
+    //         printf("\nthe Winner is : %c",ch);return 1;
+    //     }
+    // else if(count==8){
+    //     printf("\nthe Game is DRAW");
+    //     return 1;
+    // }else return 0;
+
+    return 0;
 }
-struct myDataType inputValue(char symbol[21],int count){    //**** check for 21positions later ****//
-    char value;
+
+struct inputData inputValue(string symbol[21],int count){
+    string value;
     int i;
-    struct myDataType info;
+    struct inputData info;
+
+    // input again point
     inputAgain:
+
+    // count to keep track of BW's turn
     if(count%2 == 0){
         printf("\nEnter Your Choice [White] (W):");
     }else{
         printf("\nEnter Your Choice [Black] (B):");
     }
-    scanf("%s",&value);
-    for(i=0;i<9;i++){
 
-        if(value == symbol[i]){
+    // read the input
+    //scanf("%s",&value); // this is char
+    cin >> value;
+    
+    for(i=0;i<21;i++){
+
+        if(value == symbol[i]){   // convert to string and compare
             info.i = i;
             if(count%2 == 0)
-                info.ch = 'W';
+                info.ch = " W";
             else
-                info.ch = 'B';
+                info.ch = " B";
             break;
         }else{
             info.i = -1;
@@ -98,7 +123,7 @@ struct myDataType inputValue(char symbol[21],int count){    //**** check for 21p
     return info;
 }
 
-void Display(string symbol[21]){
+void displayGameBoard(string symbol[21]){
 	system("clear"); // different console command may vary
 
     // cout << symbol[0] << endl;
