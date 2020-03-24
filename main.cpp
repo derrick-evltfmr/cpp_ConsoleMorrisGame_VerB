@@ -111,18 +111,21 @@ void Display(string symbol[21]){
 	printf("\nPlayers 1 symbol: [White](W)");
 	printf("\nPlayers 2 symbol: [Black](B)");
 	printf("\n\t\t\t");
-	printf("\n\t\t\t%s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
-	printf("\n\t\t\t |              |              |");
-	printf("\n\t\t\t |   %s--------%s--------%s    |",symbol[15].c_str(),symbol[16].c_str(),symbol[17].c_str());
-	printf("\n\t\t\t |    |         |         |    |");
-	printf("\n\t\t\t |    |   %s---%s---%s    |    |",symbol[12].c_str(),symbol[13].c_str(),symbol[14].c_str());
-	printf("\n\t\t\t |    |    |         |    |    |");
-   	printf("\n\t\t\t%s---%s---%s        %s---%s---%s",symbol[6].c_str(),symbol[7].c_str(),symbol[8].c_str(),symbol[9].c_str(),symbol[10].c_str(),symbol[11].c_str());
-	printf("\n\t\t\t |    |    |         |    |    |");
-	printf("\n\t\t\t |    |   %s--------%s    |    |",symbol[4].c_str(),symbol[5].c_str());
-	printf("\n\t\t\t |    | /                 |    |");
-	printf("\n\t\t\t |    %s-----------------%s    |",symbol[2].c_str(),symbol[3].c_str());
-    printf("\n\t\t\t |  /                          |");
-	printf("\n\t\t\t%s----------------------------%s",symbol[0].c_str(),symbol[1].c_str());
+	printf("\n\t      \t  6     %s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
+	printf("\n\t      \t         |              |              |");
+	printf("\n\t      \t  5      |   %s--------%s--------%s    |",symbol[15].c_str(),symbol[16].c_str(),symbol[17].c_str());
+	printf("\n\t      \t         |    |         |         |    |");
+	printf("\n\t      \t  4      |    |   %s---%s---%s    |    |",symbol[12].c_str(),symbol[13].c_str(),symbol[14].c_str());
+	printf("\n\t      \t         |    |    |         |    |    |");
+   	printf("\n\t      \t  3     %s---%s---%s        %s---%s---%s",symbol[6].c_str(),symbol[7].c_str(),symbol[8].c_str(),symbol[9].c_str(),symbol[10].c_str(),symbol[11].c_str());
+	printf("\n\t      \t         |    |    |         |    |    |");
+	printf("\n\t      \t  2      |    |   %s--------%s    |    |",symbol[4].c_str(),symbol[5].c_str());
+	printf("\n\t      \t         |    | /                 |    |");
+	printf("\n\t      \t  1      |   %s------------------%s    |",symbol[2].c_str(),symbol[3].c_str());
+    printf("\n\t      \t         |  /                          |");
+	printf("\n\t      \t  0     %s----------------------------%s",symbol[0].c_str(),symbol[1].c_str());
+    printf("\n\n");
+    printf("\n\t\t \t A    B    C    D    E    F    G \n");
+
 }
 
