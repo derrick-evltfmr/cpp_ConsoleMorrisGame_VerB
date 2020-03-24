@@ -103,18 +103,18 @@ void Display(char sym[21]){
 	printf("\nPlayers 1 Symbol: [White](W)");
 	printf("\nPlayers 2 Symbol: [Black](B)");
 	printf("\n\t\t\t");
-	printf("\n\t\t\t%c----|----|---%c----|---%c----|",sym[18],sym[19],sym[20]);
+	printf("\n\t\t\t%c-------------%c-------------%c",sym[18],sym[19],sym[20]);
 	printf("\n\t\t\t |              |              |");
-	printf("\n\t\t\t |   %c----|---%c----|---%c    |",sym[15],sym[16],sym[17]);
+	printf("\n\t\t\t |   %c--------%c--------%c    |",sym[15],sym[16],sym[17]);
 	printf("\n\t\t\t |    |         |         |    |");
 	printf("\n\t\t\t |    |   %c---%c---%c    |    |",sym[12],sym[13],sym[14]);
 	printf("\n\t\t\t |    |    |         |    |    |");
    	printf("\n\t\t\t%c---%c---%c        %c---%c---%c",sym[6],sym[7],sym[8],sym[9],sym[10],sym[11]);
 	printf("\n\t\t\t |    |    |         |    |    |");
-	printf("\n\t\t\t |    |   %c----|---%c    |    |",sym[4],sym[5]);
+	printf("\n\t\t\t |    |   %c--------%c    |    |",sym[4],sym[5]);
 	printf("\n\t\t\t |    | /                 |    |");
-	printf("\n\t\t\t |    %c---|----|----|---%c----|",sym[2],sym[3]);
+	printf("\n\t\t\t |    %c-----------------%c    |",sym[2],sym[3]);
     printf("\n\t\t\t |  /                          |");
-	printf("\n\t\t\t%c----|----|----|----|----|---%c",sym[0],sym[1]);
+	printf("\n\t\t\t%c----------------------------%c",sym[0],sym[1]);
 }
 
