@@ -1,0 +1,13 @@
+#include <iostream>
+using namespace std;
+
+#ifndef UTILITY_H
+#define UTILITY_H
+
+enum GameMode { GAME_MODE_NOT_SET = -1, TWO_PLAYERS_MANUAL, AI_HELPER_MODE, AI_OPPONENT_MODE };
+enum AIMode {AI_MODE_NOT_SET = -1, AI_HINT, AI_AUTO};
+enum ColorOrderMode {COLOR_ORDER_NOT_SET = -1, YOU_WHITE_FIRST, YOU_BLACK_FIRST, OPPONENT_WHITE_FIRST, OPPONENT_BLACK_FIRST};
+
+#endif // !UTILITY_H
+
+

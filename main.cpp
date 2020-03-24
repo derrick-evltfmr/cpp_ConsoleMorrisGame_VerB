@@ -4,33 +4,211 @@
 #include <iostream>
 using namespace std;
 
+#include <ctime>
+#include "utility.h"
+
 struct inputData {
     string ch;
     int i;
 };
 
+void menu();
+void gameModeMenu();
+void aiModeMenu();
+void colorOrderModeMenu();
 void run();
 int check(string symbol[21],string ch,int count);
 struct inputData inputValue(string symbol[21],int count);
 void displayGameBoard(string symbol[21]);
 
+//========================================================//
+// Global variables                                       //
+//========================================================//
+GameMode game_mode = GAME_MODE_NOT_SET;
+AIMode ai_mode = AI_MODE_NOT_SET;
+ColorOrderMode color_order_mode = COLOR_ORDER_NOT_SET;
+
 int main(){
     
     // start or restart
-    char restartGame;
+    string restartGame;
     continueLoop:
+
+    // show menu
+    menu();
 
     // run game
 	run();
 
     // after finish running the game, ask player whether to continue
 	printf("\n\nIf You Want To Play Again Press 'Y', Else press 'Any'\n\n(Press Your Choice ...)");
-	scanf("%s",&restartGame);
-	if(restartGame == 'Y' || restartGame == 'y'){
+	cin >> restartGame;
+	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
         goto continueLoop;
     }
     else exit(0);
+}
+
+void menu() {
+    while (game_mode == GAME_MODE_NOT_SET){
+        gameModeMenu();
+    }
+    if (game_mode != TWO_PLAYERS_MANUAL){
+        while (ai_mode == AI_MODE_NOT_SET){
+            aiModeMenu();
+        }
+    }
+    while (color_order_mode == COLOR_ORDER_NOT_SET){
+        colorOrderModeMenu();
+    }
+
+}
+
+void gameModeMenu() {
+    string str_choice;
+    int choice = -1;
+
+    displayMenu:
+    system("clear");
+    cout << ">> Please choose the Game Mode: " << endl;
+    cout << "[0]: 2 Players Manual Mode" << endl;
+    cout << "[1]: AI helper Mode" << endl;
+    cout << "[2]: AI opponent Mode" << endl;
+
+    cout << endl << "Choice: " << endl;
+    cin >> str_choice;
+
+    choice = stoi(str_choice); //stoi in <string>
+
+    switch(choice) {
+    case 0:
+        game_mode = TWO_PLAYERS_MANUAL;
+        break;
+
+    case 1:
+        game_mode = AI_HELPER_MODE;
+        break;
+
+    case 2:
+        game_mode = AI_OPPONENT_MODE;
+        break;
+
+    default:
+        // error message
+        cout << "\n The input is not valid" << endl;
+        
+        // delay 3 seconds
+        clock_t t;
+        t = clock();
+        while(true){
+            t = clock() - t;
+            float t_second = (float)t/CLOCKS_PER_SEC;
+            if (t_second > 5) break; 
+        }
+
+        // continue to display menu
+        goto displayMenu;
+        break;
+    }
+
+}
+
+void aiModeMenu() {
+    string str_choice;
+    int choice = -1;
+
+    displayMenu:
+    system("clear");
+    cout << ">> Please choose the AI Mode: " << endl;
+    cout << "[0] AI HINT: shows the hint result" << endl;
+    cout << "[1] AI AUTO: makes the move automatically" << endl;
+
+    cout << endl << "Choice: " << endl;
+    cin >> str_choice;
+
+    choice = stoi(str_choice); //stoi in <string>
+
+    switch(choice) {
+    case 0:
+        ai_mode = AI_HINT;
+        break;
+
+    case 1:
+        ai_mode = AI_AUTO;
+        break;
+
+    default:
+        // error message
+        cout << "\n The input is not valid" << endl;
+        
+        // delay 3 seconds
+        clock_t t;
+        t = clock();
+        while(true){
+            t = clock() - t;
+            float t_second = (float)t/CLOCKS_PER_SEC;
+            if (t_second > 5) break; 
+        }
+
+        // continue to display menu
+        goto displayMenu;
+        break;
+    }
+
+}
+
+void colorOrderModeMenu(){
+    string str_choice;
+    int choice = -1;
+
+    displayMenu:
+    system("clear");
+    cout << ">> Please choose your piece color and the order: " << endl;
+    cout << "[0] You choose WHITE, and You move FIRST (default)" << endl;
+    cout << "[1] You choose BLACK, and You move FIRST" << endl;
+    cout << "[2] Opponent choose WHITE, and Opponent move FIRST" << endl;
+    cout << "[3] Opponent choose BLACK, and Opponent move FIRST" << endl;
+
+    cout << endl << "Choice: " << endl;
+    cin >> str_choice;
+
+    choice = stoi(str_choice); //stoi in <string>
+
+    switch(choice) {
+    case 0:
+        color_order_mode = YOU_WHITE_FIRST;
+        break;
+
+    case 1:
+        color_order_mode = YOU_BLACK_FIRST;
+        break;
+
+    case 2:
+        color_order_mode = OPPONENT_WHITE_FIRST;
+        break;
+
+    case 3:
+        color_order_mode = OPPONENT_BLACK_FIRST;
+        break;
+
+    default:
+        // error message
+        cout << "\n The input is not valid" << endl;
+        
+        // delay 3 seconds
+        clock_t t;
+        t = clock();
+        while(true){
+            t = clock() - t;
+            float t_second = (float)t/CLOCKS_PER_SEC;
+            if (t_second > 5) break; 
+        }
+
+        // continue to display menu
+        goto displayMenu;
+        break;
+    }
 }
 
 void run(){
