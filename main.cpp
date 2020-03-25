@@ -9,25 +9,32 @@ using namespace std;
 //========================================================//
 // Struct                                                 //
 //========================================================//
-struct inputData {
+struct placePiece {
     string ch;   // the string that to place on board
     int pos;     // position to place the piece
 };
 
+struct movePiece {
+    placePiece removePiece;
+    placePiece movetoPiece;
+};
+
 //========================================================//
-// Functions prototypes                                   //
+// Functions Prototypes                                   //
 //========================================================//
 void menu();
 void gameModeMenu();
 void aiModeMenu();
 void colorOrderModeMenu();
 void run();
-int check(string symbol[21],string ch,int count);
-struct inputData inputValueOnBoard(string symbol[21],int count);
+int check(string symbol[21],string ch);
+struct placePiece generatePlacingPiece(string symbol[21]);
+struct movePiece generateMovingPieces(string symbol[21]);
+struct movePiece generateFlyingPieces(string symbol[21]);
 void displayGameBoard(string symbol[21]);
 
 //========================================================//
-// Global variables                                       //
+// Global Variables                                       //
 //========================================================//
 GameMode game_mode = GAME_MODE_NOT_SET;
 AIMode ai_mode = AI_MODE_NOT_SET;
@@ -42,6 +49,12 @@ int num_your_pieces;
 int num_opponent_pieces;
 int num_your_removed_pieces;
 int num_opponent_removed_pieces;
+
+//========================================================//
+// Extern Variables                                       //
+//========================================================//
+extern string Neighbor[][4];
+extern int NeighborCount[21];
 
 //========================================================//
 // Main Program                                           //
@@ -73,9 +86,10 @@ int main(){
 //========================================================//
 
 void run(){
-    // initialize count, info, symbol arr
-    int count = 0;
-    struct inputData info;
+    // initialize count, place_info, symbol arr
+    // int count = 0;
+    struct placePiece place_info;
+    struct movePiece move_info;
     string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"};
     
     // display the gameboard
@@ -100,9 +114,9 @@ void run(){
         //|| ============ ||
         if (your_game_phrase == OPENING) {
             // found the location that match the input
-            info = inputValueOnBoard(symbol,count);
+            place_info = generatePlacingPiece(symbol);
             // place piece on board
-            symbol[info.pos] = info.ch;
+            symbol[place_info.pos] = place_info.ch;
             // update the free pieces
             num_your_pieces--;
         }
@@ -110,10 +124,27 @@ void run(){
         //|| ============ ||
         //|| MIDGAME      ||
         //|| ============ ||
+        if (your_game_phrase == MIDGAME) {
+            // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
+            move_info = generateMovingPieces(symbol);
+            // remove piece on board
+            symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
+            // place piece on board
+            symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+        }
 
         //|| ============ ||
         //|| ENDGAME      ||
         //|| ============ ||
+        if (your_game_phrase == ENDGAME) {
+            // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
+            move_info = generateFlyingPieces(symbol);
+            // remove piece on board
+            symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
+            // place piece on board
+            symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+        }
+
     }
 
     // ================ //
@@ -125,9 +156,9 @@ void run(){
         //|| ============ ||
         if (opponent_game_phrase == OPENING) {
             // found the location that match the input
-            info = inputValueOnBoard(symbol,count);
+            place_info = generatePlacingPiece(symbol);
             // place piece on board
-            symbol[info.pos] = info.ch;
+            symbol[place_info.pos] = place_info.ch;
             // update the free pieces
             num_opponent_pieces--;
         }
@@ -136,10 +167,26 @@ void run(){
         //|| ============ ||
         //|| MIDGAME      ||
         //|| ============ ||
+        if (opponent_game_phrase == MIDGAME) {
+            // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
+            move_info = generateMovingPieces(symbol);
+            // remove piece on board
+            symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
+            // place piece on board
+            symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+        }
 
         //|| ============ ||
         //|| ENDGAME      ||
         //|| ============ ||
+        if (opponent_game_phrase == ENDGAME) {
+            // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
+            move_info = generateFlyingPieces(symbol);
+            // remove piece on board
+            symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
+            // place piece on board
+            symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+        }
 
     }
 
@@ -185,11 +232,11 @@ void run(){
     // ##################################################
     // ### Check winning situation                    ###
     // ##################################################
-    if(check(symbol,info.ch,count)==1){
+    if(check(symbol,place_info.ch)==1){
         // do nothing, not go back to continueLoop
     }
     else{
-        count++;
+        //count++;
         goto continueLoop;
     }
 }
@@ -198,7 +245,7 @@ void run(){
 // check game rules                                       //
 //========================================================//
 
-int check(string symbol[21],string ch,int count){
+int check(string symbol[21],string ch){
     // int i;
     // for(i = 0;i<=6; i+=3)//it's for row
     //     if(symbol[i] == ch && symbol[i+1]==ch&&symbol[i+2]==ch){
@@ -223,13 +270,13 @@ int check(string symbol[21],string ch,int count){
 }
 
 //========================================================//
-// Process inputValueOnBoard (OPENING)                    //
+// Process generatePlacingPiece (OPENING)                    //
 //========================================================//
 
-struct inputData inputValueOnBoard(string symbol[21],int count){
+struct placePiece generatePlacingPiece(string symbol[21]){
     string value;
     int i;
-    struct inputData info;
+    struct placePiece place_info;
 
     bool inputInvalid = false;
 
@@ -280,36 +327,50 @@ struct inputData inputValueOnBoard(string symbol[21],int count){
     cin >> value;
     
 
-    // find the location, and set the inputData info ch to the string we want to write on the board
+    // find the location, and set the placePiece place_info ch to the string we want to write on the board
     for(i=0;i<21;i++){
 
         // #############################################
         // FOUND THE LOCATION TO INSERT (OPENING)
         // #############################################
         if(value == symbol[i]){   // convert to string and compare
-            info.pos = i;
+            place_info.pos = i;
             if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
-                info.ch = " W";
+                place_info.ch = " W";
             else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
-                info.ch = " B";
+                place_info.ch = " B";
             else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
-                info.ch = " W";
+                place_info.ch = " W";
             else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
-                info.ch = " B";
+                place_info.ch = " B";
             break;
         }else{
-            info.pos = -1;
-            info.ch = ' ';
+            place_info.pos = -1;
+            place_info.ch = ' ';
         }
     }
-    if(info.pos == -1){
+    if(place_info.pos == -1){
         // set input invalid
         inputInvalid = true;
         goto inputAgain;
     }
     
 
-    return info;
+    return place_info;
+}
+
+//========================================================//
+// Process generateMovingPieces (MIDGAME)                 //
+//========================================================//
+struct movePiece generateMovingPieces(string symbol[21]){
+
+}
+
+//========================================================//
+// Process generateFlyingPieces (ENDGAME)                 //
+//========================================================//
+struct movePiece generateFlyingPieces(string symbol[21]){
+
 }
 
 //========================================================//
