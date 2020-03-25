@@ -4,7 +4,6 @@
 #include <iostream>
 using namespace std;
 
-#include <ctime>
 #include "utility.h"
 
 struct inputData {
@@ -27,12 +26,15 @@ void displayGameBoard(string symbol[21]);
 GameMode game_mode = GAME_MODE_NOT_SET;
 AIMode ai_mode = AI_MODE_NOT_SET;
 ColorOrderMode color_order_mode = COLOR_ORDER_NOT_SET;
+PlayerTurn player_turn = TURN_NOT_DEFINED;
+PlayerColor player_color = COLOR_NOT_DEFINED;
+GamePhrase game_phrase = OPENING;
 
 int main(){
     
     // start or restart
     string restartGame;
-    continueLoop:
+    playAgain:
 
     // show menu
     menu();
@@ -45,12 +47,13 @@ int main(){
 	cin >> restartGame;
 	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
-        goto continueLoop;
+        goto playAgain;
     }
     else exit(0);
 }
 
 void menu() {
+    // menus
     while (game_mode == GAME_MODE_NOT_SET){
         gameModeMenu();
     }
@@ -63,14 +66,36 @@ void menu() {
         colorOrderModeMenu();
     }
 
+    // turn and color
+    if (color_order_mode == YOU_WHITE_FIRST){
+        player_turn = YOUR_TURN;
+        player_color = YOU_WHITE_COLOR;
+    }
+    else if (color_order_mode == YOU_BLACK_FIRST){
+        player_turn = YOUR_TURN;
+        player_color = YOU_BLACK_COLOR;
+    }
+    else if (color_order_mode == OPPONENT_WHITE_FIRST){
+        player_turn = OPPONENT_TURN;
+        player_color = YOU_BLACK_COLOR;
+    }
+    else if (color_order_mode == OPPONENT_BLACK_FIRST){
+        player_turn = OPPONENT_TURN;
+        player_color = YOU_WHITE_COLOR;
+    }
+
 }
 
 void gameModeMenu() {
     string str_choice;
     int choice = -1;
 
-    displayMenu:
     system("clear");
+    displayMenu:
+    
+    cout << "==================================================================== " << endl;
+    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
+    cout << "==================================================================== " << endl;
     cout << ">> Please choose the Game Mode: " << endl;
     cout << "[0]: 2 Players Manual Mode" << endl;
     cout << "[1]: AI helper Mode" << endl;
@@ -95,17 +120,9 @@ void gameModeMenu() {
         break;
 
     default:
+        system("clear");
         // error message
-        cout << "\n The input is not valid" << endl;
-        
-        // delay 3 seconds
-        clock_t t;
-        t = clock();
-        while(true){
-            t = clock() - t;
-            float t_second = (float)t/CLOCKS_PER_SEC;
-            if (t_second > 5) break; 
-        }
+        cout << "\n\n The input is not valid \n\n" << endl;
 
         // continue to display menu
         goto displayMenu;
@@ -118,8 +135,12 @@ void aiModeMenu() {
     string str_choice;
     int choice = -1;
 
-    displayMenu:
     system("clear");
+    displayMenu:
+    
+    cout << "==================================================================== " << endl;
+    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
+    cout << "==================================================================== " << endl;
     cout << ">> Please choose the AI Mode: " << endl;
     cout << "[0] AI HINT: shows the hint result" << endl;
     cout << "[1] AI AUTO: makes the move automatically" << endl;
@@ -139,17 +160,9 @@ void aiModeMenu() {
         break;
 
     default:
+        system("clear");
         // error message
-        cout << "\n The input is not valid" << endl;
-        
-        // delay 3 seconds
-        clock_t t;
-        t = clock();
-        while(true){
-            t = clock() - t;
-            float t_second = (float)t/CLOCKS_PER_SEC;
-            if (t_second > 5) break; 
-        }
+        cout << "\n\n The input is not valid\n\n" << endl;
 
         // continue to display menu
         goto displayMenu;
@@ -162,8 +175,13 @@ void colorOrderModeMenu(){
     string str_choice;
     int choice = -1;
 
-    displayMenu:
+
     system("clear");
+    displayMenu:
+    
+    cout << "==================================================================== " << endl;
+    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
+    cout << "==================================================================== " << endl;
     cout << ">> Please choose your piece color and the order: " << endl;
     cout << "[0] You choose WHITE, and You move FIRST (default)" << endl;
     cout << "[1] You choose BLACK, and You move FIRST" << endl;
@@ -193,17 +211,9 @@ void colorOrderModeMenu(){
         break;
 
     default:
+        system("clear");
         // error message
-        cout << "\n The input is not valid" << endl;
-        
-        // delay 3 seconds
-        clock_t t;
-        t = clock();
-        while(true){
-            t = clock() - t;
-            float t_second = (float)t/CLOCKS_PER_SEC;
-            if (t_second > 5) break; 
-        }
+        cout << "\n\n The input is not valid\n\n" << endl;
 
         // continue to display menu
         goto displayMenu;
@@ -224,6 +234,13 @@ void run(){
     continueLoop:
     info = inputValue(symbol,count);
     symbol[info.i] = info.ch;
+
+    // switch turn after placing the piece
+    if (player_turn == YOUR_TURN)
+        player_turn = OPPONENT_TURN;
+    else if (player_turn == OPPONENT_TURN)
+        player_turn = YOUR_TURN;
+
     system("clear");
     
     // display the gameboard
@@ -266,38 +283,62 @@ struct inputData inputValue(string symbol[21],int count){
     int i;
     struct inputData info;
 
-    // input again point
-    inputAgain:
 
-    // count to keep track of BW's turn
-    if(count%2 == 0){
-        printf("\nEnter Your Choice [White] (W):");
-    }else{
-        printf("\nEnter Your Choice [Black] (B):");
-    }
+    if (game_phrase==OPENING){
+        // input again point
+        inputAgain:
 
-    // read the input
-    //scanf("%s",&value); // this is char
-    cin >> value;
-    
-    for(i=0;i<21;i++){
+        // count to keep track of BW's turn
+        if(player_turn == YOUR_TURN){
+            if (player_color == YOU_WHITE_COLOR){
+                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\nEnter Your Choice [White] (W):");
+            }
+            else if (player_color == YOU_BLACK_COLOR){
+                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\nEnter Your Choice [Black] (B):");
+            }
+            else printf("ERROR: player_color is not WHITE nor BLACK");
+        }
+        else if (player_turn == OPPONENT_TURN){
+            if (player_color == YOU_BLACK_COLOR){
+                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\nEnter Opponent Choice [White] (W):");
+            }
+            else if (player_color == YOU_WHITE_COLOR){
+                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\nEnter Opponent Choice [Black] (B):");
+            }
+        }
+        else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
 
-        if(value == symbol[i]){   // convert to string and compare
-            info.i = i;
-            if(count%2 == 0)
-                info.ch = " W";
-            else
-                info.ch = " B";
-            break;
-        }else{
-            info.i = -1;
-            info.ch = ' ';
+        // read the input
+        cin >> value;
+        
+        for(i=0;i<21;i++){
+
+            if(value == symbol[i]){   // convert to string and compare
+                info.i = i;
+                if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                    info.ch = " W";
+                else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                    info.ch = " B";
+                else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                    info.ch = " W";
+                else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                    info.ch = " B";
+                break;
+            }else{
+                info.i = -1;
+                info.ch = ' ';
+            }
+        }
+        if(info.i == -1){
+            printf("\nInput is not Valid");
+            goto inputAgain;
         }
     }
-    if(info.i == -1){
-        printf("\nInput is not Valid");
-        goto inputAgain;
-    }
+
     return info;
 }
 
@@ -311,8 +352,22 @@ void displayGameBoard(string symbol[21]){
 	printf("=====================================================================================\n");
 	printf("\t\t         Nine Men's Morris Game Variant-B");
     printf("\n=====================================================================================");
-	printf("\nPlayers 1 symbol: [White](W)");
-	printf("\nPlayers 2 symbol: [Black](B)");
+    if (color_order_mode == YOU_WHITE_FIRST) {
+        printf("\n[Players 1 (YOU     ) symbol: [White](W)]");
+        printf("\n[Players 2 (OPPONENT) symbol: [Black](B)]");
+    }
+    if (color_order_mode == YOU_BLACK_FIRST) {
+        printf("\n[Players 1 (YOU     ) symbol: [Black](B)]");
+        printf("\n[Players 2 (OPPONENT) symbol: [White](W)]");
+    }
+    if (color_order_mode == OPPONENT_WHITE_FIRST) {
+        printf("\n[Players 1 (OPPONENT) symbol: [White](W)]");
+        printf("\n[Players 2 (YOU     ) symbol: [Black](B)]");
+    }
+    if (color_order_mode == OPPONENT_BLACK_FIRST) {
+        printf("\n[Players 1 (OPPONENT) symbol: [Black](B)]");
+        printf("\n[Players 2 (YOU     ) symbol: [White](W)]");
+    }
 	printf("\n\t\t\t");
 	printf("\n\t      \t  6     %s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
 	printf("\n\t      \t         |              |              |");
