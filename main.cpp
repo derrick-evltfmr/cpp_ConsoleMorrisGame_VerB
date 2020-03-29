@@ -4,6 +4,10 @@
 #include <iostream>
 using namespace std;
 
+
+#include <vector>
+#include <cctype>
+#include <cstring>
 #include "utility.h"
 
 //========================================================//
@@ -28,6 +32,7 @@ void aiModeMenu();
 void colorOrderModeMenu();
 void run();
 int check(string symbol[21],string ch);
+vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
 struct placePiece generatePlacingPiece(string symbol[21]);
 struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
@@ -270,6 +275,14 @@ int check(string symbol[21],string ch){
 }
 
 //========================================================//
+// CheckAvailableNeighbors (MIDGAME)                      //
+//========================================================//
+vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece){
+
+
+}
+
+//========================================================//
 // Process generatePlacingPiece (OPENING)                    //
 //========================================================//
 
@@ -292,11 +305,11 @@ struct placePiece generatePlacingPiece(string symbol[21]){
         //if (your_game_phrase == OPENING){ // MUST BE OPENING WHEN ENTERING HERE
             if (player_color == YOU_WHITE_COLOR){
                 printf("\n\n[[### YOUR TURN ###]]");
-                printf("\n\nEnter Your Choice [White] (W):");
+                printf("\n\nEnter Your Choice To Place [White] (W):");
             }
             else if (player_color == YOU_BLACK_COLOR){
                 printf("\n\n[[### YOUR TURN ###]]");
-                printf("\n\nEnter Your Choice [Black] (B):");
+                printf("\n\nEnter Your Choice To Place [Black] (B):");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -307,11 +320,11 @@ struct placePiece generatePlacingPiece(string symbol[21]){
         //if (your_game_phrase == OPENING){
             if (player_color == YOU_BLACK_COLOR){
                 printf("\n\n[[### OPPONENT'S TURN ###]]");
-                printf("\n\nEnter Opponent Choice [White] (W):");
+                printf("\n\nEnter Opponent Choice To Place [White] (W):");
             }
             else if (player_color == YOU_WHITE_COLOR){
                 printf("\n\n[[### OPPONENT'S TURN ###]]");
-                printf("\n\nEnter Opponent Choice [Black] (B):");
+                printf("\n\nEnter Opponent Choice To Place [Black] (B):");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -322,6 +335,8 @@ struct placePiece generatePlacingPiece(string symbol[21]){
         // error message
         cout << "\n\n The input is not valid\n\n" << endl;
     }
+
+    inputInvalid = false;
 
     // read the input
     cin >> value;
@@ -363,7 +378,222 @@ struct placePiece generatePlacingPiece(string symbol[21]){
 // Process generateMovingPieces (MIDGAME)                 //
 //========================================================//
 struct movePiece generateMovingPieces(string symbol[21]){
+    string remove_value, moveto_value;
+    int i;
+    struct movePiece move_piece;
+    struct placePiece removePiece_info;
+    struct placePiece movetoPiece_info;
 
+    bool inputInvalid = false;
+    bool noAvailableNeighbors = false;
+
+    // input again point
+    inputAgain:
+
+    // count to keep track of BW's turn
+
+    // [[YOUR TURN]]
+    if (player_turn == YOUR_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_WHITE_COLOR){
+            printf("\n[[### YOUR TURN ###]]");
+            printf("\nEnter Your Choice To Move [White] (W):");
+        }
+        else if (player_color == YOU_BLACK_COLOR){
+            printf("\n[[### YOUR TURN ###]]");
+            printf("\nEnter Your Choice To Move [Black] (B):");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    // [[OPPONENT'S TURN]]
+    else if (player_turn == OPPONENT_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_BLACK_COLOR){
+            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\nEnter Opponent Choice To Move [White] (W):");
+        }
+        else if (player_color == YOU_WHITE_COLOR){
+            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\nEnter Opponent Choice To Move [Black] (B):");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+
+    // print error messages if applied
+    if (inputInvalid){
+        // error message
+        cout << "\n The input is not valid\n" << endl;
+    }
+
+    if (noAvailableNeighbors){
+        // error message
+        cout << "\n There is no available neighbors for the piece you just chose\n" << endl;
+    }
+
+    inputInvalid = false;
+    noAvailableNeighbors = false;
+
+    // read the input
+    cin >> remove_value;
+    printf("\n");
+
+
+    // check whether the remove value is valid
+    // 1. check if valid digit
+    bool isDigit = true;
+
+    for (i=0; i<strlen(remove_value.c_str()); i++){
+        if (!isdigit(remove_value.c_str()[i])){
+            isDigit = false;
+            break;
+        }
+    }
+
+    if (isDigit){
+        if (stoi(remove_value) >= 0 && stoi(remove_value) < 21){
+            // it is valid index
+            // 2. check whether the correct player piece to remove
+            string remove_current_value;
+            if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " W";
+            else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " B";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " W";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " B";
+
+            if (remove_current_value == symbol[stoi(remove_value)]){
+                // valid input, remove_value itself is str already
+                removePiece_info.ch = remove_value;         // restore to the original number
+                removePiece_info.pos = stoi(remove_value);  // the pos is the same as the str
+            }
+            else {
+                // remove piece not valid
+                removePiece_info.pos = -1;
+                removePiece_info.ch = ' ';
+            }
+        }
+        else {
+            // remove piece not valid
+            removePiece_info.pos = -1;
+            removePiece_info.ch = ' ';
+        }
+    }
+    else {
+        // remove piece not valid
+        removePiece_info.pos = -1;
+        removePiece_info.ch = ' ';
+    }
+
+    if(removePiece_info.pos == -1){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+
+
+    // passing this point, the removePiece is valid, then
+    // check available neighbors for the input piece
+    vector<string> available_neighbors;
+    available_neighbors = checkAvailableNeighbors(symbol, remove_value);
+
+    if (available_neighbors.size() == 0) {
+        // set no available neighbors
+        noAvailableNeighbors = true;
+        goto inputAgain;
+    }
+    else {
+        printf("The available position(s) for the piece %s move to are:", remove_value.c_str());
+        for (i=0; i<available_neighbors.size(); i++){
+            printf(" %s",available_neighbors[i].c_str());
+            if (i!=available_neighbors.size()-1) printf(",");
+        }
+    }
+
+    // ask for input the moveto piece location
+    // [[YOUR TURN]]
+    if (player_turn == YOUR_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_WHITE_COLOR){
+            printf("\n");
+            printf("\nEnter Your Choice To Move To [White] (W):");
+        }
+        else if (player_color == YOU_BLACK_COLOR){
+            printf("\n");
+            printf("\nEnter Your Choice To Move To [Black] (B):");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    // [[OPPONENT'S TURN]]
+    else if (player_turn == OPPONENT_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_BLACK_COLOR){
+            printf("\n");
+            printf("\nEnter Opponent Choice To Move To [White] (W):");
+        }
+        else if (player_color == YOU_WHITE_COLOR){
+            printf("\n");
+            printf("\nEnter Opponent Choice To Move To [Black] (B):");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+
+
+    // read the input
+    cin >> moveto_value;
+    printf("\n");
+
+
+    // check whether match the available neighbors
+    bool matchAvailableNeighbor = false;
+    for (i=0; i<available_neighbors.size(); i++){
+        if (moveto_value == available_neighbors[i]){
+            matchAvailableNeighbor = true;
+            break;
+        }
+    }
+    if (!matchAvailableNeighbor){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+    
+
+    // find the location, and set the placePiece place_info ch to the string we want to write on the board
+    for(i=0;i<21;i++){
+
+        // #############################################
+        // FOUND THE LOCATION TO INSERT (OPENING)
+        // #############################################
+        if(moveto_value == symbol[i]){   // convert to string and compare
+            movetoPiece_info.pos = i;
+            if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                movetoPiece_info.ch = " W";
+            else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                movetoPiece_info.ch = " B";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                movetoPiece_info.ch = " W";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                movetoPiece_info.ch = " B";
+            break;
+        }else{
+            movetoPiece_info.pos = -1;
+            movetoPiece_info.ch = ' ';
+        }
+    }
+    if(movetoPiece_info.pos == -1){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+    
+    move_piece.removePiece = removePiece_info;
+    move_piece.movetoPiece = movetoPiece_info;
+
+    return move_piece;
 }
 
 //========================================================//
@@ -505,6 +735,7 @@ void gameModeMenu() {
         // error message
         cout << "\n\n The input is not valid\n\n" << endl;
     }
+    inputInvalid = false;
 
     cin >> str_choice;
 
@@ -555,6 +786,7 @@ void aiModeMenu() {
         // error message
         cout << "\n\n The input is not valid\n\n" << endl;
     }
+    inputInvalid = false;
 
     cin >> str_choice;
 
@@ -604,6 +836,7 @@ void colorOrderModeMenu(){
         // error message
         cout << "\n\n The input is not valid\n\n" << endl;
     }
+    inputInvalid = false;
 
     cin >> str_choice;
 
