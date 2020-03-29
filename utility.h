@@ -16,7 +16,7 @@ enum PlayerColor {COLOR_NOT_DEFINED = -1, YOU_WHITE_COLOR, YOU_BLACK_COLOR};
 enum GamePhrase {OPENING, MIDGAME, ENDGAME};
 
 // Neighbor info (2D arr)
-string Neighbor[21][4] = {  {"02","03","07","  "}, // 01
+const string Neighbor[21][4] = {  {"02","03","07","  "}, // 01
                             {"01","12","  ","  "}, // 02
                             {"01","04","05","08"}, // 03
                             {"03","11","  ","  "}, // 04
@@ -39,7 +39,7 @@ string Neighbor[21][4] = {  {"02","03","07","  "}, // 01
                             {"12","20","  ","  "}  // 21
 };
 
-int NeighborCount[21] = {   3, // 01
+const int NeighborCount[21] = {   3, // 01
                             2, // 02
                             4, // 03
                             2, // 04

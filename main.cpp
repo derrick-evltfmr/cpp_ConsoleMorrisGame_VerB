@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <string>   // string, stoi()
 #include <iostream>
 using namespace std;
 
+#include <vector>   // vector<T>
+#include <cctype>   // isdigit()
+#include <cstring>  // strlen()
 
-#include <vector>
-#include <cctype>
-#include <cstring>
 #include "utility.h"
 
 //========================================================//
@@ -58,8 +58,8 @@ int num_opponent_removed_pieces;
 //========================================================//
 // Extern Variables                                       //
 //========================================================//
-extern string Neighbor[][4];
-extern int NeighborCount[21];
+extern const string Neighbor[][4];  // defined in utility.h
+extern const int NeighborCount[21]; // defined in utility.h
 
 //========================================================//
 // Main Program                                           //
@@ -278,8 +278,28 @@ int check(string symbol[21],string ch){
 // CheckAvailableNeighbors (MIDGAME)                      //
 //========================================================//
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece){
+    
+    vector<string> available_neighbors;
+    
+    int remove_piece_index = stoi(remove_piece) - 1; // index in Neighbor, e.g. "01" in Neighbor[0]
 
+    const string* removePiece_neighbors = Neighbor[remove_piece_index];
+    const int removePiece_neighborcount = NeighborCount[remove_piece_index];
 
+    // for each neighbor of the remove piece
+    for (int i=0; i<removePiece_neighborcount; i++){
+
+        // loop through all symbol[], check whether the location is occupied
+        for(int j=0;j<21;j++){
+
+            // if the neighbor location is free
+            if(removePiece_neighbors[i] == symbol[j]){ // neighbor[i] is the length of neighborcount, symbol[j] is the 21 location symbol
+                available_neighbors.push_back(removePiece_neighbors[i]);
+            }
+        }
+    }
+
+    return available_neighbors;
 }
 
 //========================================================//
@@ -305,11 +325,25 @@ struct placePiece generatePlacingPiece(string symbol[21]){
         //if (your_game_phrase == OPENING){ // MUST BE OPENING WHEN ENTERING HERE
             if (player_color == YOU_WHITE_COLOR){
                 printf("\n\n[[### YOUR TURN ###]]");
-                printf("\n\nEnter Your Choice To Place [White] (W):");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\n\nEnter Your Choice To ||PLACE|| [White] (W):");
             }
             else if (player_color == YOU_BLACK_COLOR){
                 printf("\n\n[[### YOUR TURN ###]]");
-                printf("\n\nEnter Your Choice To Place [Black] (B):");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\n\nEnter Your Choice To ||PLACE|| [Black] (B):");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -320,23 +354,32 @@ struct placePiece generatePlacingPiece(string symbol[21]){
         //if (your_game_phrase == OPENING){
             if (player_color == YOU_BLACK_COLOR){
                 printf("\n\n[[### OPPONENT'S TURN ###]]");
-                printf("\n\nEnter Opponent Choice To Place [White] (W):");
+                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\n\nEnter Opponent Choice To ||PLACE|| [White] (W):");
             }
             else if (player_color == YOU_WHITE_COLOR){
                 printf("\n\n[[### OPPONENT'S TURN ###]]");
-                printf("\n\nEnter Opponent Choice To Place [Black] (B):");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\n\nEnter Opponent Choice To ||PLACE|| [Black] (B):");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
     }
     else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
 
-    if (inputInvalid){
-        // error message
-        cout << "\n\n The input is not valid\n\n" << endl;
-    }
 
-    inputInvalid = false;
 
     // read the input
     cin >> value;
@@ -358,7 +401,9 @@ struct placePiece generatePlacingPiece(string symbol[21]){
                 place_info.ch = " W";
             else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
                 place_info.ch = " B";
-            break;
+
+            break; // break for loop because it's found
+
         }else{
             place_info.pos = -1;
             place_info.ch = ' ';
@@ -397,11 +442,33 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
             printf("\n[[### YOUR TURN ###]]");
-            printf("\nEnter Your Choice To Move [White] (W):");
+                        
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            if (noAvailableNeighbors){
+                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                noAvailableNeighbors = false;
+            }
+            
+            printf("\nEnter Your Choice To ||MOVE|| [White] (W):");
         }
         else if (player_color == YOU_BLACK_COLOR){
             printf("\n[[### YOUR TURN ###]]");
-            printf("\nEnter Your Choice To Move [Black] (B):");
+                        
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            if (noAvailableNeighbors){
+                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                noAvailableNeighbors = false;
+            }
+            
+            printf("\nEnter Your Choice To ||MOVE|| [Black] (B):");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -410,33 +477,42 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
             printf("\n[[### OPPONENT'S TURN ###]]");
-            printf("\nEnter Opponent Choice To Move [White] (W):");
+
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            if (noAvailableNeighbors){
+                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                noAvailableNeighbors = false;
+            }
+
+            printf("\nEnter Opponent Choice To ||MOVE|| [White] (W):");
         }
         else if (player_color == YOU_WHITE_COLOR){
             printf("\n[[### OPPONENT'S TURN ###]]");
-            printf("\nEnter Opponent Choice To Move [Black] (B):");
+            
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            if (noAvailableNeighbors){
+                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                noAvailableNeighbors = false;
+            }
+            
+            printf("\nEnter Opponent Choice To ||MOVE|| [Black] (B):");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
     else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
 
-    // print error messages if applied
-    if (inputInvalid){
-        // error message
-        cout << "\n The input is not valid\n" << endl;
-    }
-
-    if (noAvailableNeighbors){
-        // error message
-        cout << "\n There is no available neighbors for the piece you just chose\n" << endl;
-    }
-
-    inputInvalid = false;
-    noAvailableNeighbors = false;
+   
 
     // read the input
     cin >> remove_value;
-    printf("\n");
 
 
     // check whether the remove value is valid
@@ -450,8 +526,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         }
     }
 
+    // NOTE THAT!!!!!!
+    // stoi(remove_value) is always needed to -1 because it is greater than the index by 1
+
     if (isDigit){
-        if (stoi(remove_value) >= 0 && stoi(remove_value) < 21){
+        if (stoi(remove_value)-1 >= 0 && stoi(remove_value)-1 < 21){
             // it is valid index
             // 2. check whether the correct player piece to remove
             string remove_current_value;
@@ -464,10 +543,10 @@ struct movePiece generateMovingPieces(string symbol[21]){
             else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
                 remove_current_value = " B";
 
-            if (remove_current_value == symbol[stoi(remove_value)]){
+            if (remove_current_value == symbol[stoi(remove_value) - 1]){ // remove value e.g. 12, index = 11, so have to -1 !!!
                 // valid input, remove_value itself is str already
                 removePiece_info.ch = remove_value;         // restore to the original number
-                removePiece_info.pos = stoi(remove_value);  // the pos is the same as the str
+                removePiece_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
             }
             else {
                 // remove piece not valid
@@ -518,11 +597,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To Move To [White] (W):");
+            printf("\nEnter Your Choice To ||MOVETO|| [White] (W):");
         }
         else if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To Move To [Black] (B):");
+            printf("\nEnter Your Choice To ||MOVETO|| [Black] (B):");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -531,11 +610,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To Move To [White] (W):");
+            printf("\nEnter Opponent Choice To ||MOVETO|| [White] (W):");
         }
         else if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To Move To [Black] (B):");
+            printf("\nEnter Opponent Choice To ||MOVETO|| [Black] (B):");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -544,7 +623,6 @@ struct movePiece generateMovingPieces(string symbol[21]){
 
     // read the input
     cin >> moveto_value;
-    printf("\n");
 
 
     // check whether match the available neighbors
@@ -600,7 +678,16 @@ struct movePiece generateMovingPieces(string symbol[21]){
 // Process generateFlyingPieces (ENDGAME)                 //
 //========================================================//
 struct movePiece generateFlyingPieces(string symbol[21]){
+    cout << "Do nothing for now" << endl;
 
+    struct movePiece move_piece;
+    struct placePiece removePiece_info;
+    struct placePiece movetoPiece_info;
+    
+    move_piece.removePiece = removePiece_info;
+    move_piece.movetoPiece = movetoPiece_info;
+
+    return move_piece;
 }
 
 //========================================================//
@@ -733,7 +820,7 @@ void gameModeMenu() {
 
     if (inputInvalid){
         // error message
-        cout << "\n\n The input is not valid\n\n" << endl;
+        cout << "\n\nThe input is NOT VALID, try again\n" << endl;
     }
     inputInvalid = false;
 
@@ -784,7 +871,7 @@ void aiModeMenu() {
 
     if (inputInvalid){
         // error message
-        cout << "\n\n The input is not valid\n\n" << endl;
+        cout << "\n\nThe input is NOT VALID, try again\n" << endl;
     }
     inputInvalid = false;
 
@@ -834,7 +921,7 @@ void colorOrderModeMenu(){
 
     if (inputInvalid){
         // error message
-        cout << "\n\n The input is not valid\n\n" << endl;
+        cout << "\n\nThe input is NOT VALID, try again\n" << endl;
     }
     inputInvalid = false;
 
