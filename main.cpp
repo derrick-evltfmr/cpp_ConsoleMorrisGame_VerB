@@ -39,6 +39,8 @@ struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
 void displayGameBoard(string symbol[21]);
 
+void test();
+
 //========================================================//
 // Global Variables                                       //
 //========================================================//
@@ -68,6 +70,9 @@ extern map<string,string> locToPos; // defined in utility.h
 //========================================================//
 int main(){
     
+    // test code
+    test();
+
     // start or restart
     string restartGame;
     playAgain:
@@ -1000,4 +1005,24 @@ void colorOrderModeMenu(){
         goto displayMenu;
         break;
     }
+}
+
+void test() {
+    vector<vector<string>> m01 = Mill_In_Game[0];
+    vector<string> m01_1 = Mill_In_Game[0][0];
+
+    for (int i=0; i<Mill_In_Game[0].size();i++){
+        for (int j=0; j<Mill_In_Game[0][i].size();j++){
+            cout << Mill_In_Game[0][i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    // RESULT:
+    // 01 07 19 
+    // 01 03 05
+
+
+    string test;
+    cin >> test;
 }
