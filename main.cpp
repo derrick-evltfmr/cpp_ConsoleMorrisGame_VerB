@@ -32,6 +32,7 @@ void aiModeMenu();
 void colorOrderModeMenu();
 void run();
 int check(string symbol[21],string ch);
+string inputValueHandler(string input);
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
 struct placePiece generatePlacingPiece(string symbol[21]);
 struct movePiece generateMovingPieces(string symbol[21]);
@@ -60,6 +61,7 @@ int num_opponent_removed_pieces;
 //========================================================//
 extern const string Neighbor[][4];  // defined in utility.h
 extern const int NeighborCount[21]; // defined in utility.h
+extern map<string,string> locToPos; // defined in utility.h
 
 //========================================================//
 // Main Program                                           //
@@ -275,6 +277,43 @@ int check(string symbol[21],string ch){
 }
 
 //========================================================//
+// inputValueHandler (convert input variant)              //
+//========================================================//
+string inputValueHandler(string input){
+    const char* c_input = input.c_str();
+    // check whether the length is 1 and is digit, e.g. 1~9
+    if (strlen(c_input)==1){
+        if (isdigit(c_input[0])){
+            return "0"+input; // e.g. 09
+        }
+        else return "INVALID";
+    }
+
+    // check whether the length is 2
+    if (strlen(c_input)!=2){
+        return "INVALID";
+    }
+    else {
+        // it is fine originally
+        if (isdigit(c_input[0])&&(isdigit(c_input[1]))){
+            return input; // e.g. 15, no change
+        }
+        // if it is the location
+        else if (isalpha(c_input[0])&&(isdigit(c_input[1]))){
+            // to upper
+            toupper(c_input[0]);
+            string location(c_input); // use constructor to convert c_input back to string location
+            return locToPos[location];
+        }
+
+    }
+
+    return "INVALID"; // non-void function has to return something otherwise compiler will complain...
+}
+
+
+
+//========================================================//
 // CheckAvailableNeighbors (MIDGAME)                      //
 //========================================================//
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece){
@@ -316,6 +355,8 @@ struct placePiece generatePlacingPiece(string symbol[21]){
 
     // input again point
     inputAgain:
+    system("clear");
+    displayGameBoard(symbol);
 
     // count to keep track of BW's turn
 
@@ -332,7 +373,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
                     inputInvalid = false;
                 }
                 
-                printf("\n\nEnter Your Choice To ||PLACE|| [White] (W):");
+                printf("\nEnter Your Choice To ||PLACE|| [White] (W): ");
             }
             else if (player_color == YOU_BLACK_COLOR){
                 printf("\n\n[[### YOUR TURN ###]]");
@@ -343,7 +384,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
                     inputInvalid = false;
                 }
                 
-                printf("\n\nEnter Your Choice To ||PLACE|| [Black] (B):");
+                printf("\nEnter Your Choice To ||PLACE|| [Black] (B): ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -361,7 +402,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
                     inputInvalid = false;
                 }
                 
-                printf("\n\nEnter Opponent Choice To ||PLACE|| [White] (W):");
+                printf("\nEnter Opponent Choice To ||PLACE|| [White] (W): ");
             }
             else if (player_color == YOU_WHITE_COLOR){
                 printf("\n\n[[### OPPONENT'S TURN ###]]");
@@ -372,7 +413,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
                     inputInvalid = false;
                 }
                 
-                printf("\n\nEnter Opponent Choice To ||PLACE|| [Black] (B):");
+                printf("\nEnter Opponent Choice To ||PLACE|| [Black] (B): ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -383,6 +424,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
 
     // read the input
     cin >> value;
+    value = inputValueHandler(value);
     
 
     // find the location, and set the placePiece place_info ch to the string we want to write on the board
@@ -434,6 +476,8 @@ struct movePiece generateMovingPieces(string symbol[21]){
 
     // input again point
     inputAgain:
+    system("clear");
+    displayGameBoard(symbol);
 
     // count to keep track of BW's turn
 
@@ -453,7 +497,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Your Choice To ||MOVE|| [White] (W):");
+            printf("\nEnter Your Choice To ||MOVE|| [White] (W): ");
         }
         else if (player_color == YOU_BLACK_COLOR){
             printf("\n[[### YOUR TURN ###]]");
@@ -468,7 +512,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Your Choice To ||MOVE|| [Black] (B):");
+            printf("\nEnter Your Choice To ||MOVE|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -488,7 +532,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
                 noAvailableNeighbors = false;
             }
 
-            printf("\nEnter Opponent Choice To ||MOVE|| [White] (W):");
+            printf("\nEnter Opponent Choice To ||MOVE|| [White] (W): ");
         }
         else if (player_color == YOU_WHITE_COLOR){
             printf("\n[[### OPPONENT'S TURN ###]]");
@@ -503,7 +547,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Opponent Choice To ||MOVE|| [Black] (B):");
+            printf("\nEnter Opponent Choice To ||MOVE|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -513,6 +557,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
 
     // read the input
     cin >> remove_value;
+    remove_value = inputValueHandler(remove_value);
 
 
     // check whether the remove value is valid
@@ -584,7 +629,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
         goto inputAgain;
     }
     else {
-        printf("The available position(s) for the piece %s move to are:", remove_value.c_str());
+        printf("The available position(s) for the piece %s move to are: ", remove_value.c_str());
         for (i=0; i<available_neighbors.size(); i++){
             printf(" %s",available_neighbors[i].c_str());
             if (i!=available_neighbors.size()-1) printf(",");
@@ -597,11 +642,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To ||MOVETO|| [White] (W):");
+            printf("\nEnter Your Choice To ||MOVETO|| [White] (W): ");
         }
         else if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To ||MOVETO|| [Black] (B):");
+            printf("\nEnter Your Choice To ||MOVETO|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -610,11 +655,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To ||MOVETO|| [White] (W):");
+            printf("\nEnter Opponent Choice To ||MOVETO|| [White] (W): ");
         }
         else if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To ||MOVETO|| [Black] (B):");
+            printf("\nEnter Opponent Choice To ||MOVETO|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -623,6 +668,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
 
     // read the input
     cin >> moveto_value;
+    moveto_value = inputValueHandler(moveto_value);
 
 
     // check whether match the available neighbors
