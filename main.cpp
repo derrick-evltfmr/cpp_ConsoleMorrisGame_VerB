@@ -31,6 +31,7 @@ void gameModeMenu();
 void aiModeMenu();
 void colorOrderModeMenu();
 void run();
+bool checkFormMill(string symbol[21], string place_piece);
 int check(string symbol[21],string ch);
 string inputValueHandler(string input);
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
@@ -70,8 +71,8 @@ extern map<string,string> locToPos; // defined in utility.h
 //========================================================//
 int main(){
     
-    // test code
-    test();
+    // // test code
+    // test();
 
     // start or restart
     string restartGame;
@@ -101,8 +102,10 @@ void run(){
     // initialize count, place_info, symbol arr
     // int count = 0;
     struct placePiece place_info;
+    struct placePiece remove_info;
     struct movePiece move_info;
-    string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"};
+
+    string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"}; // reset 
     
     // display the gameboard
     displayGameBoard(symbol);
@@ -131,6 +134,21 @@ void run(){
             symbol[place_info.pos] = place_info.ch;
             // update the free pieces
             num_your_pieces--;
+
+            // get the last placed piece location
+            string last_place_location = to_string(place_info.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your opponent removed piece +1 (because you remove oppoent's piece)
+                num_opponent_removed_pieces++;
+            }
+            
         }
 
         //|| ============ ||
@@ -143,6 +161,20 @@ void run(){
             symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+
+            // get the last placed piece location
+            string last_place_location = to_string(move_info.movetoPiece.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your opponent removed piece +1 (because you remove oppoent's piece)
+                num_opponent_removed_pieces++;
+            }
         }
 
         //|| ============ ||
@@ -155,6 +187,20 @@ void run(){
             symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+
+            // get the last placed piece location
+            string last_place_location = to_string(move_info.movetoPiece.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your opponent removed piece +1 (because you remove oppoent's piece)
+                num_opponent_removed_pieces++;
+            }
         }
 
     }
@@ -173,6 +219,20 @@ void run(){
             symbol[place_info.pos] = place_info.ch;
             // update the free pieces
             num_opponent_pieces--;
+
+            // get the last placed piece location
+            string last_place_location = to_string(place_info.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your removed piece +1 (because your opponent remove your piece)
+                num_your_removed_pieces++;
+            }
         }
 
         
@@ -186,6 +246,20 @@ void run(){
             symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+
+            // get the last placed piece location
+            string last_place_location = to_string(move_info.movetoPiece.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your removed piece +1 (because your opponent remove your piece)
+                num_your_removed_pieces++;
+            }
         }
 
         //|| ============ ||
@@ -198,7 +272,22 @@ void run(){
             symbol[move_info.removePiece.pos] = move_info.removePiece.ch;
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
+
+            // get the last placed piece location
+            string last_place_location = to_string(move_info.movetoPiece.pos + 1);
+            last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
+            // check formed a mill
+            bool formedAMill = checkFormMill(symbol, last_place_location);
+            // if formed a mill, generate remove piece
+            if (formedAMill){
+                remove_info = generateRemovePiece(symbol);
+                // and remove piece on board
+                symbol[remove_info.pos] = remove_info.ch;
+                // number of your removed piece +1 (because your opponent remove your piece)
+                num_your_removed_pieces++;
+            }
         }
+
 
     }
 
@@ -252,6 +341,54 @@ void run(){
         goto continueLoop;
     }
 }
+
+//========================================================//
+// checkFormMill                                          //
+//========================================================//
+bool checkFormMill(string symbol[21], string place_piece){
+
+    bool formedAMill = false;
+
+    int place_piece_index = stoi(place_piece) - 1;
+
+    vector<vector<string>> m01 = Mill_In_Game[0];
+    vector<string> m01_1 = Mill_In_Game[0][0];
+
+    int fillCount; // count whether 3 mill locations occupied
+
+    // check through each mill set
+    for (int i=0; i<Mill_In_Game[place_piece_index].size();i++){           //mill01 -> {mill01_1, mill01_2}
+        
+        fillCount = 0; // reset fillCount = 0
+        
+        // check through each mill element
+        for (int j=0; j<Mill_In_Game[place_piece_index][i].size();j++){    //mill01_1 -> {"01", "07", "19"} / mill01_2 -> {"01", "03", "05"}
+            // cout << Mill_In_Game[place_piece_index][i][j] << " ";
+            
+            // loop through all symbol[], check whether the location is occupied
+            for(int k=0;k<21;k++){
+
+                // if the neighbor location is free
+                if(Mill_In_Game[place_piece_index][i][j] == symbol[k]){ // neighbor[i] is the length of neighborcount, symbol[j] is the 21 location symbol
+                    fillCount++;
+                }
+            }
+
+        }
+        
+        // if found 3 mill locations occupied, a mill was formed
+        if (fillCount == 3){
+            formedAMill = true;
+            break;
+        }
+
+    }
+
+    return formedAMill;
+
+    
+}
+
 
 //========================================================//
 // check game rules                                       //
