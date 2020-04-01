@@ -36,7 +36,8 @@ bool checkFormMill(string symbol[21], string place_piece);
 bool checkFormMillForOther(string symbol[21], string place_piece);
 bool checkIfAllPiecesInMill(string symbol[21]);
 
-int checkWinningSituation(string symbol[21]);
+void checkWinningSituation(string symbol[21]);  // I choose to not returning WinningSituation, 
+                                                // just set the global variables and check them
 
 string inputValueHandler(string input);
 
@@ -104,10 +105,24 @@ int main(){
     // print game result
     // the game ends in a draw
     if (game_winner == GAME_ENDS_IN_A_DRAW){
-        printf("\n\nThere has been 50 moves without forming any new mill. The Game ends in a draw.");
+        printf("\n\nThere has been 50 moves without forming any new mill.");
+        printf("\n\n\033[1;43mTHE GAME ENDS IN A DRAW.\033[0m"); // YELLOW BACKGROUND
     }
     // the winner is
-    // (ADD CODE HERE LATER)
+    if (game_winner == YOU_WIN){
+        if (game_winning_situation == REMAINING_JUST_2_PIECES){
+            printf("\n\nYour opponent has only 2 pieces left on the board.");
+        }
+        
+        printf("\n\n\033[1;42mYOU WIN THE GAME !!\033[0m"); // GREEN BACKGROUND
+    }
+    if (game_winner == OPPONENT_WIN){
+        if (game_winning_situation == REMAINING_JUST_2_PIECES){
+            printf("\n\nYou have only 2 pieces left on the board.");
+        }
+        
+        printf("\n\n\033[1;41mYOUR OPPONENT WIN THE GAME !!\033[0m"); // RED BACKGROUND
+    }
 
     // after finish running the game, ask player whether to continue
 	printf("\n\nIf you want to play again Press 'Y', otherwise Press 'Any other key'\n\n(Press Your Choice ...)");
@@ -402,9 +417,15 @@ void run(){
     // ##################################################
     // ### Check winning situation / draw situation   ###
     // ##################################################
-    if(check(symbol,place_info.ch)==1){
-        // do nothing, not go back to continueLoop
+    // check Winning Situation - will change the value of game_winner and game_winning_situation if any of the conditions matches
+    checkWinningSituation(symbol);
+
+    // if game_winner is set to something else (!=NOT SET means SET)
+    if(game_winner!=WINNER_NOT_SET){
+        // do nothing, not go back to continueLoop, so the function run() will end
     }
+
+    // if game_winner is still not set, turn + 1, check if draws and continueLoop
     else{
         notFormingMill_count++;
 
@@ -577,31 +598,26 @@ bool checkIfAllPiecesInMill(string symbol[21]){
 }
 
 //========================================================//
-// check game rules                                       //
+// checkWinningSituation                                  //
 //========================================================//
+void checkWinningSituation(string symbol[21]){
+    // get the updatest remainingpieces numbers
+    int num_your_remaining_pieces = 9 - num_your_removed_pieces; 
+    int num_opponent_remaining_pieces = 9 - num_opponent_removed_pieces; 
 
-int check(string symbol[21],string ch){
-    // int i;
-    // for(i = 0;i<=6; i+=3)//it's for row
-    //     if(symbol[i] == ch && symbol[i+1]==ch&&symbol[i+2]==ch){
-    //         printf("\nthe Winner is : %c",ch);return 1;
-    //     }
-    // for(i = 0;i<3; i++)//it's for column
-    //     if(symbol[i]==ch && symbol[i+3]==ch&&symbol[i+6]==ch){
-    //         printf("\nthe Winner is : %c",ch);return 1;
-    //     }
-    // if(symbol[0]==ch && symbol[4]==ch&&symbol[8]==ch){
-    //         printf("\nthe Winner is : %c",ch);return 1;
-    //     }
-    // else if(symbol[2]==ch && symbol[4]==ch && symbol[6]==ch){
-    //         printf("\nthe Winner is : %c",ch);return 1;
-    //     }
-    // else if(count==8){
-    //     printf("\nthe Game is DRAW");
-    //     return 1;
-    // }else return 0;
+    // CHECK IF WINNING SITUATION HAPPENS
+    // (1) any player remaining pieces less than 3 (just 2 pieces left)
+    if (num_your_remaining_pieces == 2){
+        game_winner = OPPONENT_WIN;
+        game_winning_situation = REMAINING_JUST_2_PIECES;
+        return;
+    }
+    if (num_opponent_remaining_pieces == 2){
+        game_winner = YOU_WIN;
+        game_winning_situation = REMAINING_JUST_2_PIECES;
+        return;
+    }
 
-    return 0;
 }
 
 //========================================================//
