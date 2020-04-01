@@ -352,9 +352,6 @@ bool checkFormMill(string symbol[21], string place_piece){
 
     int place_piece_index = stoi(place_piece) - 1;
 
-    vector<vector<string>> m01 = Mill_In_Game[0];
-    vector<string> m01_1 = Mill_In_Game[0][0];
-
     int fillCount; // count whether 3 mill locations occupied
 
     // check through each mill set
@@ -365,14 +362,19 @@ bool checkFormMill(string symbol[21], string place_piece){
         // check through each mill element
         for (int j=0; j<Mill_In_Game[place_piece_index][i].size();j++){    //mill01_1 -> {"01", "07", "19"} / mill01_2 -> {"01", "03", "05"}
             // cout << Mill_In_Game[place_piece_index][i][j] << " ";
-            
-            // loop through all symbol[], check whether the location is occupied
-            for(int k=0;k<21;k++){
 
-                // if the neighbor location is free
-                if(Mill_In_Game[place_piece_index][i][j] == symbol[k]){ // neighbor[i] is the length of neighborcount, symbol[j] is the 21 location symbol
-                    fillCount++;
-                }
+            // check if the symbol[mill_set_index] is occupied
+            int mill_set_index = stoi(Mill_In_Game[place_piece_index][i][j]) - 1;
+            
+            string occupied_ch;
+            if (player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " W";
+            else if (player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " B";
+            else if (player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " W";
+            else if (player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " B";
+
+            // if match and occupied, fillCount ++
+            if (symbol[mill_set_index]==occupied_ch){
+                fillCount++;
             }
 
         }
