@@ -66,6 +66,10 @@ GamePhrase your_game_phrase = OPENING;
 GamePhrase opponent_game_phrase = OPENING;
 
 Winner game_winner = WINNER_NOT_SET;
+WinningSituation game_winning_situation = WINNING_SITUATION_NOT_SET;
+int notFormingMill_count = 0; // if 50 steps(can self-defined game rule) without forming a mill, 
+                              // the game is draw (since a fair game, must be draw if no errors made)
+                              // reset to 0 when (1). initialize the game (2). forming a mill
 
 int num_your_pieces;
 int num_opponent_pieces;
@@ -96,6 +100,14 @@ int main(){
 
     // run game
 	run();
+
+    // print game result
+    // the game ends in a draw
+    if (game_winner == GAME_ENDS_IN_A_DRAW){
+        printf("\n\nThere has been 50 moves without forming any new mill. The Game ends in a draw.");
+    }
+    // the winner is
+    // (ADD CODE HERE LATER)
 
     // after finish running the game, ask player whether to continue
 	printf("\n\nIf you want to play again Press 'Y', otherwise Press 'Any other key'\n\n(Press Your Choice ...)");
@@ -133,7 +145,9 @@ void run(){
     opponent_game_phrase = OPENING;
 
     game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
 
+    notFormingMill_count = 0;
 
     // ====================================================================================================================================//
 
@@ -183,6 +197,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
                 num_opponent_removed_pieces++;
+                
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
             
         }
@@ -210,6 +227,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
                 num_opponent_removed_pieces++;
+                
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
         }
 
@@ -236,6 +256,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
                 num_opponent_removed_pieces++;
+                
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
         }
 
@@ -268,6 +291,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
                 num_your_removed_pieces++;
+
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
         }
 
@@ -295,6 +321,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
                 num_your_removed_pieces++;
+
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
         }
 
@@ -321,6 +350,9 @@ void run(){
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
                 num_your_removed_pieces++;
+
+                // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
+                notFormingMill_count = -1;
             }
         }
 
@@ -366,16 +398,26 @@ void run(){
     displayGameBoard(symbol);
 
 
+
     // ##################################################
-    // ### Check winning situation                    ###
+    // ### Check winning situation / draw situation   ###
     // ##################################################
     if(check(symbol,place_info.ch)==1){
         // do nothing, not go back to continueLoop
     }
     else{
-        //count++;
-        goto continueLoop;
+        notFormingMill_count++;
+
+        // if notFormingMill for 50 turns, set to a draw, and since not going back to continueLoop, so the function run() will end
+        if (notFormingMill_count >= 50){
+            game_winner = GAME_ENDS_IN_A_DRAW;
+        }
+        // if not exceeding 50 turns, continue
+        else {
+            goto continueLoop;
+        }
     }
+
 }
 
 //========================================================//
