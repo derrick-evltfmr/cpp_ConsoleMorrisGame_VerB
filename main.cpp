@@ -36,6 +36,7 @@ int check(string symbol[21],string ch);
 string inputValueHandler(string input);
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
 struct placePiece generatePlacingPiece(string symbol[21]);
+struct placePiece generateRemovingPiece(string symbol[21]);
 struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
 void displayGameBoard(string symbol[21]);
@@ -142,7 +143,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
@@ -169,7 +170,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
@@ -195,7 +196,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your opponent removed piece +1 (because you remove oppoent's piece)
@@ -227,7 +228,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
@@ -254,7 +255,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
@@ -280,7 +281,7 @@ void run(){
             bool formedAMill = checkFormMill(symbol, last_place_location);
             // if formed a mill, generate remove piece
             if (formedAMill){
-                remove_info = generateRemovePiece(symbol);
+                remove_info = generateRemovingPiece(symbol);
                 // and remove piece on board
                 symbol[remove_info.pos] = remove_info.ch;
                 // number of your removed piece +1 (because your opponent remove your piece)
@@ -484,7 +485,7 @@ vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece){
 }
 
 //========================================================//
-// Process generatePlacingPiece (OPENING)                    //
+// Process generatePlacingPiece (OPENING)                 //
 //========================================================//
 
 struct placePiece generatePlacingPiece(string symbol[21]){
@@ -601,6 +602,163 @@ struct placePiece generatePlacingPiece(string symbol[21]){
     
 
     return place_info;
+}
+
+
+//========================================================//
+// Process generateRemovingPiece                          //
+//========================================================//
+
+struct placePiece generateRemovingPiece(string symbol[21]){
+    string remove_value;
+    int i;
+    struct placePiece remove_info;
+
+    bool inputInvalid = false;
+
+
+    // input again point
+    inputAgain:
+    system("clear");
+    displayGameBoard(symbol);
+
+    
+
+    // count to keep track of BW's turn
+
+    // [[YOUR TURN]]
+    if (player_turn == YOUR_TURN){
+
+        //if (your_game_phrase == OPENING){ // MUST BE OPENING WHEN ENTERING HERE
+            if (player_color == YOU_WHITE_COLOR){
+                printf("\nA Mill is Formed !! You can remove one of your opponent piece !!");
+
+                printf("\n\n[[### YOUR TURN ###]]");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\nEnter Your Choice To ||REMOVE|| [Black] (B): ");
+            }
+            else if (player_color == YOU_BLACK_COLOR){
+                printf("\nA Mill is Formed !! You can remove one of your opponent piece !!");
+
+                printf("\n\n[[### YOUR TURN ###]]");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\nEnter Your Choice To ||REMOVE|| [White] (W): ");
+            }
+            else printf("ERROR: player_color is not WHITE nor BLACK");
+        //}
+    }
+    // [[OPPONENT'S TURN]]
+    else if (player_turn == OPPONENT_TURN){
+
+        //if (your_game_phrase == OPENING){
+            if (player_color == YOU_BLACK_COLOR){
+                printf("\nA Mill is Formed !! Your opponent can remove one of your piece !!");
+
+                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\nEnter Opponent Choice To ||REMOVE|| [Black] (B): ");
+            }
+            else if (player_color == YOU_WHITE_COLOR){
+                printf("\nA Mill is Formed !! Your opponent can remove one of your piece !!");
+
+                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                                
+                // error message
+                if (inputInvalid){
+                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    inputInvalid = false;
+                }
+                
+                printf("\nEnter Opponent Choice To ||REMOVE|| [White] (W): ");
+            }
+            else printf("ERROR: player_color is not WHITE nor BLACK");
+        //}
+    }
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+
+
+
+    // read the input
+    cin >> remove_value;
+    remove_value = inputValueHandler(remove_value);
+    
+
+    // check whether the remove value is valid
+    // 1. check if valid digit
+    bool isDigit = true;
+
+    for (i=0; i<strlen(remove_value.c_str()); i++){
+        if (!isdigit(remove_value.c_str()[i])){
+            isDigit = false;
+            break;
+        }
+    }
+
+    // NOTE THAT!!!!!!
+    // stoi(remove_value) is always needed to -1 because it is greater than the index by 1
+
+    if (isDigit){
+        if (stoi(remove_value)-1 >= 0 && stoi(remove_value)-1 < 21){
+            // it is valid index
+            // 2. check whether the correct player piece to remove  [IN THIS CASE, WE REMOVE THE OTHER'S PIECE, SO OPPOSITE COLOR]
+            string remove_current_value;
+            if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " B";
+            else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " W";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " B";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " W";
+
+            if (remove_current_value == symbol[stoi(remove_value) - 1]){ // remove value e.g. 12, index = 11, so have to -1 !!!
+                // valid input, remove_value itself is str already
+                remove_info.ch = remove_value;         // restore to the original number
+                remove_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
+            }
+            else {
+                // remove piece not valid
+                remove_info.pos = -1;
+                remove_info.ch = ' ';
+            }
+        }
+        else {
+            // remove piece not valid
+            remove_info.pos = -1;
+            remove_info.ch = ' ';
+        }
+    }
+    else {
+        // remove piece not valid
+        remove_info.pos = -1;
+        remove_info.ch = ' ';
+    }
+
+    if(remove_info.pos == -1){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+
+    return remove_info;
 }
 
 //========================================================//
@@ -892,6 +1050,9 @@ void displayGameBoard(string symbol[21]){
 	printf("=====================================================================================\n");
 	printf("\t\t         Nine Men's Morris Game Variant-B");
     printf("\n=====================================================================================\n");
+
+    printf("[[ GAMEBOARD INPUT FORMAT: '01' or '1' or 'A0' to represent the bottom-left corner ]]\n");
+
     // remaining pieces
     int num_your_remaining_pieces = 9 - num_your_removed_pieces; 
     int num_opponent_remaining_pieces = 9 - num_opponent_removed_pieces; 
@@ -924,7 +1085,8 @@ void displayGameBoard(string symbol[21]){
         printf("\nPlayer1(OPPONENT)[Black](B) || Free pieces: %d || Total remaining pieces: %d || Game phrase: %s", num_opponent_pieces, num_opponent_remaining_pieces, opponent_str_gamephrase.c_str());
         printf("\nPlayer2(YOU     )[White](W) || Free pieces: %d || Total remaining pieces: %d || Game phrase: %s", num_your_pieces, num_your_remaining_pieces, your_str_gamephrase.c_str());
     }
-	printf("\n\n\t\t\t");
+    
+	printf("\n\t\t\t");
 	printf("\n\t      \t  6     %s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
 	printf("\n\t      \t         |              |              |");
 	printf("\n\t      \t  5      |   %s--------%s--------%s    |",symbol[15].c_str(),symbol[16].c_str(),symbol[17].c_str());
