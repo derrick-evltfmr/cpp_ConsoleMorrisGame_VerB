@@ -443,6 +443,62 @@ bool checkFormMillForOther(string symbol[21], string place_piece){
     
 }
 
+//========================================================//
+// checkIfAllPiecesInMill (opposite occupied_ch)           //
+//========================================================//
+bool checkIfAllPiecesInMill(string symbol[21]){
+    bool allPiecesInMill = false;
+    int pieceInMillCount = 0;
+
+    int num_of_remaining_pieces;
+    // note that we want the value of the other, so it is the opposite
+    if (player_turn==YOUR_TURN){
+        num_of_remaining_pieces = num_opponent_pieces - num_opponent_removed_pieces;
+    }
+    else if (player_turn==OPPONENT_TURN){
+        num_of_remaining_pieces = num_your_pieces - num_your_removed_pieces;
+    }
+    else printf("ERROR: in checkIfAllPieces, player_turn is not YOUR or OPPONENT turn.\n");
+
+    string occupied_ch; // this is reversed as checkFormMillForOther, becuase you want to check the other's pieces
+    if (player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " B";
+    else if (player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " W";
+    else if (player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " B";
+    else if (player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " W";
+
+    vector<string> the_other_pieces;
+
+    // find all the other's pieces
+    for(int i=0;i<21;i++){
+
+        if(symbol[i]==occupied_ch){   // if the board occupied equal the color piece we want to find
+            
+            // we don't need break because we want to find all
+            int the_other_pieces_index = i;
+            string the_other_piece_location = to_string(i+1);
+            the_other_piece_location = inputValueHandler(the_other_piece_location); // handled the single-digit number, e.g. "9"->"09"
+            // if found, add to the vector
+            the_other_pieces.push_back(the_other_piece_location);
+        }
+
+    }
+
+    // for each other's piece
+    for (int i=0;i<the_other_pieces.size();i++){ // index is always less than size by 1 because starting from 0
+        bool pieceInAMill = false;
+
+        pieceInAMill = checkFormMillForOther(symbol, the_other_pieces[i]); // for the opposite other color, assume the_other_pieces[i] is to remove
+
+        if (pieceInAMill) pieceInMillCount++;
+    }
+
+    // if all remaining pieces are in mill(s), then true
+    if (pieceInMillCount == num_of_remaining_pieces){
+        allPiecesInMill = true;
+    }
+
+    return allPiecesInMill;
+}
 
 //========================================================//
 // check game rules                                       //
@@ -804,8 +860,12 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                 // check formed a mill for the other
                 bool formedAMill = checkFormMillForOther(symbol, remove_value);
                 
-                // not in a mill, remove!!!
-                if (!formedAMill){
+                // 4. ONE MORE EXCEPTION CASE CHECK!!!
+                // also check if all other pieces are milled
+                bool allPiecesInMill = checkIfAllPiecesInMill(symbol);
+
+                // not in a mill, nor all pieces in mill case, then remove!!!
+                if (!formedAMill || allPiecesInMill) {
                     // valid input, remove_value itself is str already
                     remove_info.ch = remove_value;         // restore to the original number
                     remove_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
@@ -1254,11 +1314,9 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     if (player_turn == YOUR_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
-            printf("\n");
             printf("\nEnter Your Choice To ||FLYTO|| [White] (W): ");
         }
         else if (player_color == YOU_BLACK_COLOR){
-            printf("\n");
             printf("\nEnter Your Choice To ||FLYTO|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
@@ -1267,11 +1325,9 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     else if (player_turn == OPPONENT_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
-            printf("\n");
             printf("\nEnter Opponent Choice To ||FLYTO|| [White] (W): ");
         }
         else if (player_color == YOU_WHITE_COLOR){
-            printf("\n");
             printf("\nEnter Opponent Choice To ||FLYTO|| [Black] (B): ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
