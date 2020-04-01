@@ -1109,16 +1109,216 @@ struct movePiece generateMovingPieces(string symbol[21]){
 // Process generateFlyingPieces (ENDGAME)                 //
 //========================================================//
 struct movePiece generateFlyingPieces(string symbol[21]){
-    cout << "Do nothing for now" << endl;
-
-    struct movePiece move_piece;
+    string remove_value, flyto_value;
+    int i;
+    struct movePiece fly_piece;
     struct placePiece removePiece_info;
-    struct placePiece movetoPiece_info;
-    
-    move_piece.removePiece = removePiece_info;
-    move_piece.movetoPiece = movetoPiece_info;
+    struct placePiece flytoPiece_info;
 
-    return move_piece;
+    bool inputInvalid = false;
+
+    // input again point
+    inputAgain:
+    system("clear");
+    displayGameBoard(symbol);
+
+    // count to keep track of BW's turn
+
+    // [[YOUR TURN]]
+    if (player_turn == YOUR_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_WHITE_COLOR){
+            printf("\n[[### YOUR TURN ###]]");
+                        
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            
+            printf("\nEnter Your Choice To ||FLY|| [White] (W): ");
+        }
+        else if (player_color == YOU_BLACK_COLOR){
+            printf("\n[[### YOUR TURN ###]]");
+                        
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            
+            printf("\nEnter Your Choice To ||FLY|| [Black] (B): ");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    // [[OPPONENT'S TURN]]
+    else if (player_turn == OPPONENT_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_BLACK_COLOR){
+            printf("\n[[### OPPONENT'S TURN ###]]");
+
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+
+            printf("\nEnter Opponent Choice To ||FLY|| [White] (W): ");
+        }
+        else if (player_color == YOU_WHITE_COLOR){
+            printf("\n[[### OPPONENT'S TURN ###]]");
+            
+            // print error messages if applied
+            if (inputInvalid){
+                cout << "\nThe input is NOT VALID, try again" << endl;
+                inputInvalid = false;
+            }
+            
+            printf("\nEnter Opponent Choice To ||FLY|| [Black] (B): ");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+
+   
+
+    // read the input
+    cin >> remove_value;
+    remove_value = inputValueHandler(remove_value);
+
+
+    // check whether the remove value is valid
+    // 1. check if valid digit
+    bool isDigit = true;
+
+    for (i=0; i<strlen(remove_value.c_str()); i++){
+        if (!isdigit(remove_value.c_str()[i])){
+            isDigit = false;
+            break;
+        }
+    }
+
+    // NOTE THAT!!!!!!
+    // stoi(remove_value) is always needed to -1 because it is greater than the index by 1
+
+    if (isDigit){
+        if (stoi(remove_value)-1 >= 0 && stoi(remove_value)-1 < 21){
+            // it is valid index
+            // 2. check whether the correct player piece to remove
+            string remove_current_value;
+            if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " W";
+            else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " B";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                remove_current_value = " W";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                remove_current_value = " B";
+
+            if (remove_current_value == symbol[stoi(remove_value) - 1]){ // remove value e.g. 12, index = 11, so have to -1 !!!
+                // valid input, remove_value itself is str already
+                removePiece_info.ch = remove_value;         // restore to the original number
+                removePiece_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
+            }
+            else {
+                // remove piece not valid
+                removePiece_info.pos = -1;
+                removePiece_info.ch = ' ';
+            }
+        }
+        else {
+            // remove piece not valid
+            removePiece_info.pos = -1;
+            removePiece_info.ch = ' ';
+        }
+    }
+    else {
+        // remove piece not valid
+        removePiece_info.pos = -1;
+        removePiece_info.ch = ' ';
+    }
+
+    if(removePiece_info.pos == -1){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+
+
+    // passing this point, the removePiece is valid, then
+    // no need to check available neighbors for the input piece
+    
+
+    // ask for input the flyto piece location
+    // [[YOUR TURN]]
+    if (player_turn == YOUR_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_WHITE_COLOR){
+            printf("\n");
+            printf("\nEnter Your Choice To ||FLYTO|| [White] (W): ");
+        }
+        else if (player_color == YOU_BLACK_COLOR){
+            printf("\n");
+            printf("\nEnter Your Choice To ||FLYTO|| [Black] (B): ");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    // [[OPPONENT'S TURN]]
+    else if (player_turn == OPPONENT_TURN){
+        // MUST BE MIDGAME
+        if (player_color == YOU_BLACK_COLOR){
+            printf("\n");
+            printf("\nEnter Opponent Choice To ||FLYTO|| [White] (W): ");
+        }
+        else if (player_color == YOU_WHITE_COLOR){
+            printf("\n");
+            printf("\nEnter Opponent Choice To ||FLYTO|| [Black] (B): ");
+        }
+        else printf("ERROR: player_color is not WHITE nor BLACK");
+    }
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+
+
+    // read the input
+    cin >> flyto_value;
+    flyto_value = inputValueHandler(flyto_value);
+
+
+    // no need to check whether match the available neighbors
+    
+
+    // find the location, and set the placePiece place_info ch to the string we want to write on the board
+    for(i=0;i<21;i++){
+
+        // #############################################
+        // FOUND THE LOCATION TO INSERT (OPENING)
+        // #############################################
+        if(flyto_value == symbol[i]){   // find whether the spot is free
+            flytoPiece_info.pos = i;
+            if(player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR)
+                flytoPiece_info.ch = " W";
+            else if(player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR)
+                flytoPiece_info.ch = " B";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR)
+                flytoPiece_info.ch = " W";
+            else if(player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR)
+                flytoPiece_info.ch = " B";
+            break;
+        }else{
+            flytoPiece_info.pos = -1;
+            flytoPiece_info.ch = ' ';
+        }
+    }
+    if(flytoPiece_info.pos == -1){
+        // set input invalid
+        inputInvalid = true;
+        goto inputAgain;
+    }
+    
+    fly_piece.removePiece = removePiece_info;
+    fly_piece.movetoPiece = flytoPiece_info;
+
+    return fly_piece;
 }
 
 //========================================================//
