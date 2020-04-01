@@ -31,15 +31,22 @@ void gameModeMenu();
 void aiModeMenu();
 void colorOrderModeMenu();
 void run();
+
 bool checkFormMill(string symbol[21], string place_piece);
 bool checkFormMillForOther(string symbol[21], string place_piece);
-int check(string symbol[21],string ch);
+bool checkIfAllPiecesInMill(string symbol[21]);
+
+int checkWinningSituation(string symbol[21]);
+
 string inputValueHandler(string input);
+
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
+
 struct placePiece generatePlacingPiece(string symbol[21]);
 struct placePiece generateRemovingPiece(string symbol[21]);
 struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
+
 void displayGameBoard(string symbol[21]);
 
 void test();
@@ -47,14 +54,18 @@ void test();
 //========================================================//
 // Global Variables                                       //
 //========================================================//
+// handled by menus
 GameMode game_mode = GAME_MODE_NOT_SET;
 AIMode ai_mode = AI_MODE_NOT_SET;
 ColorOrderMode color_order_mode = COLOR_ORDER_NOT_SET;
 PlayerTurn player_turn = TURN_NOT_DEFINED;
 PlayerColor player_color = COLOR_NOT_DEFINED;
 
+// handled by initializing
 GamePhrase your_game_phrase = OPENING;
 GamePhrase opponent_game_phrase = OPENING;
+
+Winner game_winner = WINNER_NOT_SET;
 
 int num_your_pieces;
 int num_opponent_pieces;
@@ -62,7 +73,7 @@ int num_your_removed_pieces;
 int num_opponent_removed_pieces;
 
 //========================================================//
-// Extern Variables                                       //
+// Extern Variables (if constant and included then may not needed)//
 //========================================================//
 extern const string Neighbor[][4];  // defined in utility.h
 extern const int NeighborCount[21]; // defined in utility.h
@@ -101,6 +112,9 @@ int main(){
 //========================================================//
 
 void run(){
+    // ====================================================================================================================================//
+    //        INITIALIZE / RESET BEFORE THE GAME STARTS
+    // ====================================================================================================================================//
     // initialize count, place_info, symbol arr
     // int count = 0;
     struct placePiece place_info;
@@ -109,6 +123,26 @@ void run(){
 
     string symbol[21] = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"}; // reset 
     
+    // initialize/reset num of pieces, game phrase
+    num_your_pieces = 9;
+    num_opponent_pieces = 9;
+    num_your_removed_pieces = 0;
+    num_opponent_removed_pieces = 0;
+
+    your_game_phrase = OPENING;
+    opponent_game_phrase = OPENING;
+
+    game_winner = WINNER_NOT_SET;
+
+
+    // ====================================================================================================================================//
+
+
+
+
+
+
+
     // display the gameboard
     displayGameBoard(symbol);
 
@@ -1480,15 +1514,6 @@ void menu() {
         player_turn = OPPONENT_TURN;
         player_color = YOU_WHITE_COLOR;
     }
-
-    // initialize/reset num of pieces, game phrase
-    num_your_pieces = 9;
-    num_opponent_pieces = 9;
-    num_your_removed_pieces = 0;
-    num_opponent_removed_pieces = 0;
-
-    your_game_phrase = OPENING;
-    opponent_game_phrase = OPENING;
 }
 
 void gameModeMenu() {

@@ -18,6 +18,8 @@ enum PlayerColor {COLOR_NOT_DEFINED = -1, YOU_WHITE_COLOR, YOU_BLACK_COLOR};
 
 enum GamePhrase {OPENING, MIDGAME, ENDGAME};
 
+enum Winner {WINNER_NOT_SET = -1, YOU_WIN, OPPONENT_WIN};
+
 // Neighbor info (2D arr)
 const string Neighbor[21][4] = {    {"02","03","07","  "}, // 01
                                     {"01","12","  ","  "}, // 02
