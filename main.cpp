@@ -32,6 +32,7 @@ void aiModeMenu();
 void colorOrderModeMenu();
 void run();
 bool checkFormMill(string symbol[21], string place_piece);
+bool checkFormMillForOther(string symbol[21], string place_piece);
 int check(string symbol[21],string ch);
 string inputValueHandler(string input);
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
@@ -394,6 +395,56 @@ bool checkFormMill(string symbol[21], string place_piece){
 
 
 //========================================================//
+// checkFormMillForOther (opposite occupied_ch)           //
+//========================================================//
+bool checkFormMillForOther(string symbol[21], string place_piece){
+
+    bool formedAMill = false;
+
+    int place_piece_index = stoi(place_piece) - 1;
+
+    int fillCount; // count whether 3 mill locations occupied
+
+    // check through each mill set
+    for (int i=0; i<Mill_In_Game[place_piece_index].size();i++){           //mill01 -> {mill01_1, mill01_2}
+        
+        fillCount = 0; // reset fillCount = 0
+        
+        // check through each mill element
+        for (int j=0; j<Mill_In_Game[place_piece_index][i].size();j++){    //mill01_1 -> {"01", "07", "19"} / mill01_2 -> {"01", "03", "05"}
+            // cout << Mill_In_Game[place_piece_index][i][j] << " ";
+
+            // check if the symbol[mill_set_index] is occupied
+            int mill_set_index = stoi(Mill_In_Game[place_piece_index][i][j]) - 1;
+            
+            string occupied_ch;
+            if (player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " B";
+            else if (player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " W";
+            else if (player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " B";
+            else if (player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " W";
+
+            // if match and occupied, fillCount ++
+            if (symbol[mill_set_index]==occupied_ch){
+                fillCount++;
+            }
+
+        }
+        
+        // if found 3 mill locations occupied, a mill was formed
+        if (fillCount == 3){
+            formedAMill = true;
+            break;
+        }
+
+    }
+
+    return formedAMill;
+
+    
+}
+
+
+//========================================================//
 // check game rules                                       //
 //========================================================//
 
@@ -617,6 +668,7 @@ struct placePiece generateRemovingPiece(string symbol[21]){
     struct placePiece remove_info;
 
     bool inputInvalid = false;
+    bool cannotRemoveMillError = false;
 
 
     // input again point
@@ -642,6 +694,10 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                     cout << "\nThe input is NOT VALID, try again" << endl;
                     inputInvalid = false;
                 }
+                if (cannotRemoveMillError){
+                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cannotRemoveMillError = false;
+                }
                 
                 printf("\nEnter Your Choice To ||REMOVE|| [Black] (B): ");
             }
@@ -654,6 +710,10 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                 if (inputInvalid){
                     cout << "\nThe input is NOT VALID, try again" << endl;
                     inputInvalid = false;
+                }
+                if (cannotRemoveMillError){
+                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cannotRemoveMillError = false;
                 }
                 
                 printf("\nEnter Your Choice To ||REMOVE|| [White] (W): ");
@@ -675,6 +735,10 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                     cout << "\nThe input is NOT VALID, try again" << endl;
                     inputInvalid = false;
                 }
+                if (cannotRemoveMillError){
+                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cannotRemoveMillError = false;
+                }
                 
                 printf("\nEnter Opponent Choice To ||REMOVE|| [Black] (B): ");
             }
@@ -687,6 +751,10 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                 if (inputInvalid){
                     cout << "\nThe input is NOT VALID, try again" << endl;
                     inputInvalid = false;
+                }
+                if (cannotRemoveMillError){
+                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cannotRemoveMillError = false;
                 }
                 
                 printf("\nEnter Opponent Choice To ||REMOVE|| [White] (W): ");
@@ -732,9 +800,24 @@ struct placePiece generateRemovingPiece(string symbol[21]){
                 remove_current_value = " W";
 
             if (remove_current_value == symbol[stoi(remove_value) - 1]){ // remove value e.g. 12, index = 11, so have to -1 !!!
-                // valid input, remove_value itself is str already
-                remove_info.ch = remove_value;         // restore to the original number
-                remove_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
+                // 3. ONE MORE CHECK !!!!! CHECK WHETHER THE REMOVE_VALUE IS IN A MILL !!!
+                // check formed a mill for the other
+                bool formedAMill = checkFormMillForOther(symbol, remove_value);
+                
+                // not in a mill, remove!!!
+                if (!formedAMill){
+                    // valid input, remove_value itself is str already
+                    remove_info.ch = remove_value;         // restore to the original number
+                    remove_info.pos = stoi(remove_value) - 1;  // the pos is the same as the str // NOTE THAT INDEX IS ALWAYS 1 less than the text
+                }
+                else {
+                    // remove piece not valid
+                    remove_info.pos = -1;
+                    remove_info.ch = ' ';
+                    // instead of input invalid, show cannotRemoveMillError
+                    cannotRemoveMillError = true;
+                    goto inputAgain;
+                }
             }
             else {
                 // remove piece not valid
@@ -1053,7 +1136,7 @@ void displayGameBoard(string symbol[21]){
 	printf("\t\t         Nine Men's Morris Game Variant-B");
     printf("\n=====================================================================================\n");
 
-    printf("[[ GAMEBOARD INPUT FORMAT: '01' or '1' or 'A0' to represent the bottom-left corner ]]\n");
+    printf("// GAMEBOARD INPUT FORMAT => '01' or '1' or 'A0' to represent the bottom-left corner //\n");
 
     // remaining pieces
     int num_your_remaining_pieces = 9 - num_your_removed_pieces; 
