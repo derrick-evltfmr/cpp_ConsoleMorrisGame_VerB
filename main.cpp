@@ -36,6 +36,7 @@ bool checkFormMill(string symbol[21], string place_piece);
 bool checkFormMillForOther(string symbol[21], string place_piece);
 bool checkIfAllPiecesInMill(string symbol[21]);
 
+bool checkNoMoreAvailableMoves(string symbol[21]);
 void checkWinningSituation(string symbol[21]);  // I choose to not returning WinningSituation, 
                                                 // just set the global variables and check them
 
@@ -223,6 +224,22 @@ void run(){
         //|| MIDGAME      ||
         //|| ============ ||
         if (your_game_phrase == MIDGAME) {
+
+            // ##########################################################
+            // # THE FIRST THING TO CHECK IN MIDGAME is,                #
+            // # whether there are still available moves for the pieces #
+            // ##########################################################
+            bool noMoreAvailableMoves = checkNoMoreAvailableMoves(symbol);
+            // if no more available moves
+            if (noMoreAvailableMoves) {
+                // it's your turn, but you don't have any available moves, so you lose
+                game_winner = OPPONENT_WIN;
+                game_winning_situation = NO_MORE_AVAILABLE_MOVES;
+                // end the run() function
+                return;
+            }
+            // ##########################################################
+
             // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
             move_info = generateMovingPieces(symbol);
             // remove piece on board
@@ -317,6 +334,23 @@ void run(){
         //|| MIDGAME      ||
         //|| ============ ||
         if (opponent_game_phrase == MIDGAME) {
+
+            // ##########################################################
+            // # THE FIRST THING TO CHECK IN MIDGAME is,                #
+            // # whether there are still available moves for the pieces #
+            // ##########################################################
+            bool noMoreAvailableMoves = checkNoMoreAvailableMoves(symbol);
+            // if no more available moves
+            if (noMoreAvailableMoves) {
+                // it's your opponent's turn, but he does't have any available moves, so opponent lose
+                game_winner = YOU_WIN;
+                game_winning_situation = NO_MORE_AVAILABLE_MOVES;
+                // end the run() function
+                return;
+            }
+            // ##########################################################
+
+
             // check whether the input is valid[neighbor+empty] or not, if valid, generate two infos
             move_info = generateMovingPieces(symbol);
             // remove piece on board
@@ -572,7 +606,7 @@ bool checkIfAllPiecesInMill(string symbol[21]){
             
             // we don't need break because we want to find all
             int the_other_pieces_index = i;
-            string the_other_piece_location = to_string(i+1);
+            string the_other_piece_location = to_string(the_other_pieces_index+1);
             the_other_piece_location = inputValueHandler(the_other_piece_location); // handled the single-digit number, e.g. "9"->"09"
             // if found, add to the vector
             the_other_pieces.push_back(the_other_piece_location);
@@ -598,6 +632,59 @@ bool checkIfAllPiecesInMill(string symbol[21]){
 }
 
 //========================================================//
+// checkNoMoreAvailableMoves                              //
+//========================================================//
+bool checkNoMoreAvailableMoves(string symbol[21]){
+    bool noMoreAvailableMoves = false;
+    int noAvailableNeighbor_count = 0;
+
+    string occupied_ch; // not reversed, exactly, if your turn and you are white then white
+    if (player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " W";
+    else if (player_turn == YOUR_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " B";
+    else if (player_turn == OPPONENT_TURN && player_color == YOU_BLACK_COLOR) occupied_ch = " W";
+    else if (player_turn == OPPONENT_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " B";
+
+    vector<string> the_player_pieces;
+
+    // find all the player's pieces
+    for(int i=0;i<21;i++){
+
+        if(symbol[i]==occupied_ch){   // if the board occupied equal the color piece we want to find
+            
+            // we don't need break because we want to find all
+            int the_player_pieces_index = i;
+            string the_player_piece_location = to_string(the_player_pieces_index+1);
+            the_player_piece_location = inputValueHandler(the_player_piece_location); // handled the single-digit number, e.g. "9"->"09"
+            // if found, add to the vector
+            the_player_pieces.push_back(the_player_piece_location);
+        }
+
+    }
+
+    // for each player's piece
+    for (int i=0;i<the_player_pieces.size();i++){ // index is always less than size by 1 because starting from 0
+
+        // check if there is any available and free neighbors
+        vector<string> available_neighbors;
+        available_neighbors = checkAvailableNeighbors(symbol, the_player_pieces[i]); // put the player pieces [i] to check their neighbors
+
+        // if for this player's piece no available neighbors
+        if (available_neighbors.size() == 0) {
+            noAvailableNeighbor_count++;
+        }
+
+    }
+
+    if (noAvailableNeighbor_count == the_player_pieces.size()){ // can use the_player_pieces.size(), or num_of_remaining, but just too lazy to check
+        noMoreAvailableMoves = true;
+    }
+
+    return noMoreAvailableMoves;
+}
+
+
+
+//========================================================//
 // checkWinningSituation                                  //
 //========================================================//
 void checkWinningSituation(string symbol[21]){
@@ -617,6 +704,9 @@ void checkWinningSituation(string symbol[21]){
         game_winning_situation = REMAINING_JUST_2_PIECES;
         return;
     }
+
+    // (2) no more available moves in MIDGAME (because won't happen in OPENING / ENDGAME)
+    // taken care by checkNoMoreAvailableMoves
 
 }
 
