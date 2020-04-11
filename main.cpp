@@ -41,14 +41,16 @@ bool checkRepeatedMoves(string symbol[21],string removePiece_location, string mo
 void checkWinningSituation(string symbol[21]);  // I choose to not returning WinningSituation, 
                                                 // just set the global variables and check them
 
-string inputValueHandler(string input);
-
 vector<string> checkAvailableNeighbors(string symbol[21], string remove_piece);
 
 struct placePiece generatePlacingPiece(string symbol[21]);
 struct placePiece generateRemovingPiece(string symbol[21]);
 struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
+
+string inputValueHandler(string input);
+string getStateOfTheTurn(string symbol[21]);
+void storeStateOfEachTurnInVecAndFile(string current_state_string);
 
 void displayGameBoard(string symbol[21]);
 
@@ -87,6 +89,9 @@ string opponent_this_remove;
 string opponent_this_place;
 string opponent_last_remove;
 string opponent_last_place;
+
+// state vector to store the input output
+vector<string> game_states;
 
 //========================================================//
 // Extern Variables (if constant and included then may not needed)//
@@ -197,10 +202,11 @@ void run(){
     opponent_last_remove = "  ";
     opponent_last_place = "  ";
 
+    // reset the game_states vector
+    game_states.clear(); // remove all elements, size = 0
+
+
     // ====================================================================================================================================//
-
-
-
 
 
 
@@ -268,6 +274,22 @@ void run(){
                 game_winner = OPPONENT_WIN;
                 game_winning_situation = NO_MORE_AVAILABLE_MOVES;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
             // ##########################################################
@@ -320,6 +342,22 @@ void run(){
                 game_winner = OPPONENT_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
 
@@ -387,6 +425,22 @@ void run(){
                 game_winner = OPPONENT_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
 
@@ -454,6 +508,22 @@ void run(){
                 game_winner = YOU_WIN;
                 game_winning_situation = NO_MORE_AVAILABLE_MOVES;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
             // ##########################################################
@@ -507,6 +577,22 @@ void run(){
                 game_winner = YOU_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
 
@@ -576,6 +662,22 @@ void run(){
                 game_winner = YOU_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
                 // end the run() function
+
+                // BEFORE RETURN THE FUNCTION, AS IT STOPPED IN THE MIDDLE OF THE TURN
+                // ##################################################
+                // ### Display the game board after making a move ###
+                // ##################################################
+                system("clear");
+                
+                // display the gameboard
+                displayGameBoard(symbol);
+                // ##################################################
+                // ### Store the state before go back or end      ###
+                // ##################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                string current_state_string = getStateOfTheTurn(symbol);
+                storeStateOfEachTurnInVecAndFile(current_state_string);
+
                 return;
             }
 
@@ -632,6 +734,12 @@ void run(){
     // display the gameboard
     displayGameBoard(symbol);
 
+    // ##################################################
+    // ### Store the state before go back or end      ###
+    // ##################################################
+    // at the end of the turn, the piece is set, before it goes back or ends, store the state
+    string current_state_string = getStateOfTheTurn(symbol);
+    storeStateOfEachTurnInVecAndFile(current_state_string);
 
 
     // ##################################################
@@ -918,43 +1026,6 @@ void checkWinningSituation(string symbol[21]){
     // taken care by checkRepeatedMoves
 
 }
-
-//========================================================//
-// inputValueHandler (convert input variant)              //
-//========================================================//
-string inputValueHandler(string input){
-    const char* c_input = input.c_str();
-    // check whether the length is 1 and is digit, e.g. 1~9
-    if (strlen(c_input)==1){
-        if (isdigit(c_input[0])){
-            return "0"+input; // e.g. 09
-        }
-        else return "INVALID";
-    }
-
-    // check whether the length is 2
-    if (strlen(c_input)!=2){
-        return "INVALID";
-    }
-    else {
-        // it is fine originally
-        if (isdigit(c_input[0])&&(isdigit(c_input[1]))){
-            return input; // e.g. 15, no change
-        }
-        // if it is the location
-        else if (isalpha(c_input[0])&&(isdigit(c_input[1]))){
-            // to upper
-            toupper(c_input[0]);
-            string location(c_input); // use constructor to convert c_input back to string location
-            return locToPos[location];
-        }
-
-    }
-
-    return "INVALID"; // non-void function has to return something otherwise compiler will complain...
-}
-
-
 
 //========================================================//
 // CheckAvailableNeighbors (MIDGAME)                      //
@@ -1767,6 +1838,87 @@ struct movePiece generateFlyingPieces(string symbol[21]){
 
     return fly_piece;
 }
+
+
+//========================================================//
+// inputValueHandler (convert input variant)              //
+//========================================================//
+string inputValueHandler(string input){
+    const char* c_input = input.c_str();
+    // check whether the length is 1 and is digit, e.g. 1~9
+    if (strlen(c_input)==1){
+        if (isdigit(c_input[0])){
+            return "0"+input; // e.g. 09
+        }
+        else return "INVALID";
+    }
+
+    // check whether the length is 2
+    if (strlen(c_input)!=2){
+        return "INVALID";
+    }
+    else {
+        // it is fine originally
+        if (isdigit(c_input[0])&&(isdigit(c_input[1]))){
+            return input; // e.g. 15, no change
+        }
+        // if it is the location
+        else if (isalpha(c_input[0])&&(isdigit(c_input[1]))){
+            // to upper
+            toupper(c_input[0]);
+            string location(c_input); // use constructor to convert c_input back to string location
+            return locToPos[location];
+        }
+
+    }
+
+    return "INVALID"; // non-void function has to return something otherwise compiler will complain...
+}
+
+
+//================================================================//
+// getStateOfTheTurn (get the string representation of the state) //
+//================================================================//
+string getStateOfTheTurn (string symbol[21]){
+    // current_state_string
+    string current_state_string = "xxxxxxxxxxxxxxxxxxxxx";
+    // string temp_char = " "; 
+    // Note: inside a string are all chars, cannot replace with string, but char ok
+    char temp_char = ' ';
+
+    for (int i=0; i<21; i++) {
+        if (symbol[i] == " W"){
+            temp_char = 'W';
+        }
+        else if (symbol[i] == " W"){
+            temp_char = 'B';
+        }
+        else {
+            temp_char = 'x';
+        }
+
+        // update the current_state_string
+        current_state_string[i] = temp_char;
+
+    }
+
+    cout << current_state_string << endl;
+
+}
+
+//==============================================================//
+// storeStateOfEachTurnInVecAndFile (keep track of the states ) //
+//==============================================================//
+void storeStateOfEachTurnInVecAndFile(string current_state_string){
+
+
+}
+
+
+
+
+
+
 
 //========================================================//
 // Display Game Board                                     //
