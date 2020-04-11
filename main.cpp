@@ -37,6 +37,7 @@ bool checkFormMillForOther(string symbol[21], string place_piece);
 bool checkIfAllPiecesInMill(string symbol[21]);
 
 bool checkNoMoreAvailableMoves(string symbol[21]);
+bool checkRepeatedMoves(string symbol[21],string removePiece_location, string movetoPiece_location);
 void checkWinningSituation(string symbol[21]);  // I choose to not returning WinningSituation, 
                                                 // just set the global variables and check them
 
@@ -78,6 +79,15 @@ int num_opponent_pieces;
 int num_your_removed_pieces;
 int num_opponent_removed_pieces;
 
+string your_this_remove;
+string your_this_place;
+string your_last_remove;
+string your_last_place;
+string opponent_this_remove;
+string opponent_this_place;
+string opponent_last_remove;
+string opponent_last_place;
+
 //========================================================//
 // Extern Variables (if constant and included then may not needed)//
 //========================================================//
@@ -114,6 +124,12 @@ int main(){
         if (game_winning_situation == REMAINING_JUST_2_PIECES){
             printf("\n\nYour opponent has only 2 pieces left on the board.");
         }
+        if (game_winning_situation == NO_MORE_AVAILABLE_MOVES){
+            printf("\n\nYour opponent has no more available moves on the board.");
+        }
+        if (game_winning_situation == REPEATED_WITHOUT_FORMING_A_MILL){
+            printf("\n\nYour opponent repeated his previous move in the game.");
+        }
         
         printf("\n\n\033[1;42mYOU WIN THE GAME !!\033[0m"); // GREEN BACKGROUND
     }
@@ -121,12 +137,18 @@ int main(){
         if (game_winning_situation == REMAINING_JUST_2_PIECES){
             printf("\n\nYou have only 2 pieces left on the board.");
         }
+        if (game_winning_situation == NO_MORE_AVAILABLE_MOVES){
+            printf("\n\nYou have no more available moves on the board.");
+        }
+        if (game_winning_situation == REPEATED_WITHOUT_FORMING_A_MILL){
+            printf("\n\nYou repeated your previous move in the game.");
+        }
         
-        printf("\n\n\033[1;41mYOUR OPPONENT WIN THE GAME !!\033[0m"); // RED BACKGROUND
+        printf("\n\n\033[1;41mYOUR OPPONENT WINS THE GAME !!\033[0m"); // RED BACKGROUND
     }
 
     // after finish running the game, ask player whether to continue
-	printf("\n\nIf you want to play again Press 'Y', otherwise Press 'Any other key'\n\n(Press Your Choice ...)");
+	printf("\n\nIf you want to play again Press 'Y', otherwise Press 'Any other key' to exit\n\n(Press Your Choice ...)");
 	cin >> restartGame;
 	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
@@ -164,6 +186,16 @@ void run(){
     game_winning_situation = WINNING_SITUATION_NOT_SET;
 
     notFormingMill_count = 0;
+
+    your_this_remove = "  ";
+    your_this_place = "  ";
+    your_last_remove = "  ";
+    your_last_place = "  ";
+
+    opponent_this_remove = "  ";
+    opponent_this_place = "  ";
+    opponent_last_remove = "  ";
+    opponent_last_place = "  ";
 
     // ====================================================================================================================================//
 
@@ -263,6 +295,44 @@ void run(){
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
             }
+
+            // ##########################################################
+            // # after checking if formed a mill, the next thing to     #
+            // # is whether the player made repeated moves              #
+            // ##########################################################
+
+            // check if your current moves are the same as your last moves
+            // first, get the current removePiece_location and movetoPiece_location
+            string removePiece_location = to_string(move_info.removePiece.pos + 1);
+            removePiece_location = inputValueHandler(removePiece_location);
+            string movetoPiece_location = to_string(move_info.movetoPiece.pos + 1);
+            movetoPiece_location = inputValueHandler(movetoPiece_location);
+
+            // check with the last moves
+            // last moves -> this moves -> current moves
+            // we actually compare the current moves with last moves because we compare before updating
+
+            bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
+
+            // if repeatedMoves and not formedAMill
+            if (repeatedMoves && !formedAMill) {
+                // it's your turn, but you made repeated moves, so you lose
+                game_winner = OPPONENT_WIN;
+                game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
+                // end the run() function
+                return;
+            }
+
+            // otherwise, update the lastmoves and thismoves 
+            // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
+            
+            // update last moves <= this moves 
+            your_last_remove = your_this_remove;
+            your_last_place = your_this_place; 
+            // update this moves <= current moves
+            your_this_remove = removePiece_location;
+            your_this_place = movetoPiece_location; 
+
         }
 
         //|| ============ ||
@@ -292,6 +362,44 @@ void run(){
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
             }
+
+            // ##########################################################
+            // # after checking if formed a mill, the next thing to     #
+            // # is whether the player made repeated moves              #
+            // ##########################################################
+
+            // check if your current moves are the same as your last moves
+            // first, get the current removePiece_location and movetoPiece_location
+            string removePiece_location = to_string(move_info.removePiece.pos + 1);
+            removePiece_location = inputValueHandler(removePiece_location);
+            string movetoPiece_location = to_string(move_info.movetoPiece.pos + 1);
+            movetoPiece_location = inputValueHandler(movetoPiece_location);
+
+            // check with the last moves
+            // last moves -> this moves -> current moves
+            // we actually compare the current moves with last moves because we compare before updating
+
+            bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
+
+            // if repeatedMoves and not formedAMill
+            if (repeatedMoves && !formedAMill) {
+                // it's your turn, but you made repeated moves, so you lose
+                game_winner = OPPONENT_WIN;
+                game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
+                // end the run() function
+                return;
+            }
+
+            // otherwise, update the lastmoves and thismoves 
+            // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
+            
+            // update last moves <= this moves 
+            your_last_remove = your_this_remove;
+            your_last_place = your_this_place; 
+            // update this moves <= current moves
+            your_this_remove = removePiece_location;
+            your_this_place = movetoPiece_location; 
+
         }
 
     }
@@ -374,6 +482,45 @@ void run(){
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
             }
+
+            // ##########################################################
+            // # after checking if formed a mill, the next thing to     #
+            // # is whether the player made repeated moves              #
+            // ##########################################################
+
+            // check if oppoent's current moves are the same as opponent's last moves
+            // first, get the current removePiece_location and movetoPiece_location
+            string removePiece_location = to_string(move_info.removePiece.pos + 1);
+            removePiece_location = inputValueHandler(removePiece_location);
+            string movetoPiece_location = to_string(move_info.movetoPiece.pos + 1);
+            movetoPiece_location = inputValueHandler(movetoPiece_location);
+
+            // check with the last moves
+            // last moves -> this moves -> current moves
+            // we actually compare the current moves with last moves because we compare before updating
+
+            bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
+
+            // if repeatedMoves and not formedAMill
+            if (repeatedMoves && !formedAMill) {
+                // it's opponent turn, but he made repeated moves, so he loses
+                game_winner = YOU_WIN;
+                game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
+                // end the run() function
+                return;
+            }
+
+            // otherwise, update the lastmoves and thismoves 
+            // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
+            
+            // update last moves <= this moves 
+            opponent_last_remove = opponent_this_remove;
+            opponent_last_place = opponent_this_place; 
+            // update this moves <= current moves
+            opponent_this_remove = removePiece_location;
+            opponent_this_place = movetoPiece_location; 
+
+
         }
 
         //|| ============ ||
@@ -403,6 +550,45 @@ void run(){
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
             }
+
+
+            // ##########################################################
+            // # after checking if formed a mill, the next thing to     #
+            // # is whether the player made repeated moves              #
+            // ##########################################################
+
+            // check if oppoent's current moves are the same as opponent's last moves
+            // first, get the current removePiece_location and movetoPiece_location
+            string removePiece_location = to_string(move_info.removePiece.pos + 1);
+            removePiece_location = inputValueHandler(removePiece_location);
+            string movetoPiece_location = to_string(move_info.movetoPiece.pos + 1);
+            movetoPiece_location = inputValueHandler(movetoPiece_location);
+
+            // check with the last moves
+            // last moves -> this moves -> current moves
+            // we actually compare the current moves with last moves because we compare before updating
+
+            bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
+
+            // if repeatedMoves and not formedAMill
+            if (repeatedMoves && !formedAMill) {
+                // it's opponent turn, but he made repeated moves, so he loses
+                game_winner = YOU_WIN;
+                game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
+                // end the run() function
+                return;
+            }
+
+            // otherwise, update the lastmoves and thismoves 
+            // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
+            
+            // update last moves <= this moves 
+            opponent_last_remove = opponent_this_remove;
+            opponent_last_place = opponent_this_place; 
+            // update this moves <= current moves
+            opponent_this_remove = removePiece_location;
+            opponent_this_place = movetoPiece_location; 
+
         }
 
 
@@ -682,6 +868,26 @@ bool checkNoMoreAvailableMoves(string symbol[21]){
     return noMoreAvailableMoves;
 }
 
+//========================================================//
+// checkRepeatedMoves (MIDGAME and ENDGAME)               //
+//========================================================//
+bool checkRepeatedMoves(string symbol[21], string removePiece_location, string movetoPiece_location){
+    bool repeatedMoves = false;
+
+    if (player_turn == YOUR_TURN){
+        if (removePiece_location == your_last_remove && movetoPiece_location == your_last_place){
+            repeatedMoves = true;
+        }
+    }
+
+    else if (player_turn == OPPONENT_TURN){
+        if (removePiece_location == opponent_last_remove && movetoPiece_location == opponent_last_place){
+            repeatedMoves = true;
+        }
+    }
+
+    return repeatedMoves;
+}
 
 
 //========================================================//
@@ -707,6 +913,9 @@ void checkWinningSituation(string symbol[21]){
 
     // (2) no more available moves in MIDGAME (because won't happen in OPENING / ENDGAME)
     // taken care by checkNoMoreAvailableMoves
+
+    // (3) repeated moves in MIDGAME/ENDGAME (because won't happen in OPENING)
+    // taken care by checkRepeatedMoves
 
 }
 
