@@ -7,6 +7,8 @@ using namespace std;
 #include <vector>   // vector<T>
 #include <cctype>   // isdigit()
 #include <cstring>  // strlen()
+#include <fstream>  // ofstream
+#include <ctime>    // time(), time_t type, tm struct
 
 #include "utility.h"
 
@@ -30,6 +32,9 @@ void menu();
 void gameModeMenu();
 void aiModeMenu();
 void colorOrderModeMenu();
+
+void createOutputFile();
+
 void run();
 
 bool checkFormMill(string symbol[21], string place_piece);
@@ -93,6 +98,9 @@ string opponent_last_place;
 // state vector to store the input output
 vector<string> game_states;
 
+// output stream
+ofstream ofs;
+
 //========================================================//
 // Extern Variables (if constant and included then may not needed)//
 //========================================================//
@@ -111,6 +119,9 @@ int main(){
     // start or restart
     string restartGame;
     playAgain:
+
+    // create outputfile
+    createOutputFile();
 
     // show menu
     menu();
@@ -1875,6 +1886,35 @@ string inputValueHandler(string input){
     return "INVALID"; // non-void function has to return something otherwise compiler will complain...
 }
 
+//================================================================//
+// createOutputFile (use the time to name the outputfile)         //
+//================================================================//
+void createOutputFile(){
+    // current date/time based on current system
+    time_t current_time = time(0);  // Number of sec since January 1,1970, we have to convert it to readable time
+
+    tm *local_tm = localtime(&current_time);
+    int year = 1900 + local_tm->tm_year;    // tm_year is the year since 1900
+    int month = 1 + local_tm->tm_mon;       // tm_mon is the index 0~11, need to +1
+    int day = local_tm->tm_mday;            // tm_mday is from 1~31
+    int hour = local_tm->tm_hour;           // tm_hour range is the 0~23
+    int min = local_tm->tm_min;             // tm_min range is 0~59
+    int sec = local_tm->tm_sec;             // tm_sec range is 0~59
+
+    string filename;
+    filename = to_string(year) + to_string(month) + to_string(day) + "_" + to_string(hour) + to_string(min) + to_string(sec) + "_gamerecord.txt";
+
+    ofs.open(filename, ofstream::app);  // app is the append mode, if the file is opened, continue to append, 
+                                        // while ate is to erase and write from blank, but this doesn't matter in this program
+                                        // since every record will be unique.
+    
+    ofs << "==================================================================== " << endl;
+    ofs << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
+    ofs << "==================================================================== " << endl;
+    ofs << "Record time: " << ctime(&current_time) << endl; // ctime(&time(0)) can return the string form of the local time
+    ofs << "==================================================================== " << endl;
+
+}
 
 //================================================================//
 // getStateOfTheTurn (get the string representation of the state) //
@@ -2195,7 +2235,6 @@ void test() {
     // RESULT:
     // 01 07 19 
     // 01 03 05
-
 
     string test;
     cin >> test;
