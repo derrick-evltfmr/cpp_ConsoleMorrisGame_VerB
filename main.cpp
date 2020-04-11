@@ -101,6 +101,7 @@ vector<string> game_states;
 // output stream
 ofstream ofs;
 
+
 //========================================================//
 // Extern Variables (if constant and included then may not needed)//
 //========================================================//
@@ -294,12 +295,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -362,12 +357,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -445,12 +434,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -528,12 +511,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -597,12 +574,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -682,12 +653,6 @@ void run(){
                 
                 // display the gameboard
                 displayGameBoard(symbol);
-                // ##################################################
-                // ### Store the state before go back or end      ###
-                // ##################################################
-                // at the end of the turn, the piece is set, before it goes back or ends, store the state
-                string current_state_string = getStateOfTheTurn(symbol);
-                storeStateOfEachTurnInVecAndFile(current_state_string);
 
                 return;
             }
@@ -745,12 +710,12 @@ void run(){
     // display the gameboard
     displayGameBoard(symbol);
 
-    // ##################################################
-    // ### Store the state before go back or end      ###
-    // ##################################################
+    // ###################################################################
+    // ### Store the state when action is made (game state is changed) ###
+    // ###################################################################
     // at the end of the turn, the piece is set, before it goes back or ends, store the state
     string current_state_string = getStateOfTheTurn(symbol);
-    storeStateOfEachTurnInVecAndFile(current_state_string);
+    storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
 
 
     // ##################################################
