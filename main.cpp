@@ -2018,8 +2018,12 @@ void createOutputFile(){
     int min = local_tm->tm_min;             // tm_min range is 0~59
     int sec = local_tm->tm_sec;             // tm_sec range is 0~59
 
+    
+
     string filename;
-    filename = to_string(year) + to_string(month) + to_string(day) + "_" + to_string(hour) + to_string(min) + to_string(sec) + "_gamerecord.txt";
+    filename = to_string(year) + to_string(month) + to_string(day) + "_" 
+                + inputValueHandler(to_string(hour)) + inputValueHandler(to_string(min)) + inputValueHandler(to_string(sec)) + "_gamerecord.txt";
+    // add inputValueHandler to take care of the singledigit number, e.g. 00:18:07, we want 001807, not 0187
 
     ofs.open(filename, ofstream::app);  // app is the append mode, if the file is opened, continue to append, 
                                         // while ate is to erase and write from blank, but this doesn't matter in this program
