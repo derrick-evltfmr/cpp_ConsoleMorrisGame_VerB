@@ -52,6 +52,7 @@ struct movePiece generateMovingPieces(string symbol[21]);
 struct movePiece generateFlyingPieces(string symbol[21]);
 
 string inputValueHandler(string input);
+char pieceCHtoWBXchar(string piece_ch);
 string getStateOfTheTurn(string symbol[21]);
 
 
@@ -1967,6 +1968,31 @@ string inputValueHandler(string input){
     return "INVALID"; // non-void function has to return something otherwise compiler will complain...
 }
 
+//============================================================//
+// pieceCHtoWBXchar (convert the content ch in piece to W,B,x //
+//============================================================//
+char pieceCHtoWBXchar(string piece_ch){
+    const char* c_piece_ch = piece_ch.c_str();
+
+    char WBXchar;
+
+    if (piece_ch == " W"){
+        WBXchar = 'W';
+    }
+    else if (piece_ch == " B"){
+        WBXchar = 'B';
+    }
+    else if (isdigit(c_piece_ch[0])&&(isdigit(c_piece_ch[1]))){
+        WBXchar = 'x';
+    }
+    else {
+        WBXchar ='?';
+        printf("\n\nERROR in pieceCHtoWBXchar, the string piece_ch is %s, but failed to get char W/B/x ", c_piece_ch );
+    }
+
+
+}
+
 //================================================================//
 // createOutputFile (use the time to name the outputfile)         //
 //================================================================//
@@ -2069,7 +2095,8 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
 
             wbx_char = pieceCHtoWBXchar(place_info.ch);
 
-            ofs << "Place piece " << wbx_char << " at location " << place_location <<
+            ofs << "Place piece " << wbx_char << " at location " << posTextToLocationInMap(place_location) << "(" << place_location << ")"
+                                                                    << " [index" << place_index << "]" << endl;
 
             break;
 
