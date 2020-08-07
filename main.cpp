@@ -1939,6 +1939,7 @@ struct movePiece generateFlyingPieces(string symbol[21]){
 string inputValueHandler(string input){
     const char* c_input = input.c_str();
     // check whether the length is 1 and is digit, e.g. 1~9
+
     if (strlen(c_input)==1){
         if (isdigit(c_input[0])){
             return "0"+input; // e.g. 09
@@ -1958,8 +1959,17 @@ string inputValueHandler(string input){
         // if it is the location
         else if (isalpha(c_input[0])&&(isdigit(c_input[1]))){
             // to upper
-            toupper(c_input[0]);
-            string location(c_input); // use constructor to convert c_input back to string location
+            char c_0 = toupper(c_input[0]);
+            char c_1 = c_input[1];
+
+            // there are several ways to convert char to string, but cannot considered they are the same... will have errors
+            string location; 
+            location.push_back(c_0);
+            location.push_back(c_1);
+            
+            cout << "LINE1965 c_0: " << c_0 << endl;
+            cout << "LINE1966 c_1: " << c_1 << endl;
+            cout << "LINE1967 location: " << location << endl;
             return locToPos[location];
         }
 
@@ -2037,7 +2047,7 @@ string getStateOfTheTurn (string symbol[21]){
         if (symbol[i] == " W"){
             temp_char = 'W';
         }
-        else if (symbol[i] == " W"){
+        else if (symbol[i] == " B"){
             temp_char = 'B';
         }
         else {
