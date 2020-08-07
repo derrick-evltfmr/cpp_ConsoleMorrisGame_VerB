@@ -92,6 +92,48 @@ map<string,string> locToPos = { {"A0","01"},
 }; // map <,> has to have ; otherwise many random error occur 
 
 
+// generic type so that it can use in any datatype pair in map
+template<typename T1, typename T2>
+bool findKeyByValueInMap(vector<T1> & vector_of_keyType, map<T1, T2> mapOfElements, T2 value)
+{
+	bool foundKey = false;
+	iterator it = mapOfElements.begin();
+
+	// Iterate through the map
+	while(it != mapOfElements.end())
+	{
+		// Check if value of this entry matches with given value
+		if(it->second == value){        // map<T1,T2>  {first, second} so it->second is the value in the map
+			foundKey = true;
+
+			// Push the key in given map
+			vector_of_keyType.push_back(it->first);
+		}
+		// Go to next pair of elements in the map
+		it++;
+	}
+	return foundKey;
+}
+
+
+string posTextToLocationInMap(string posText){ // using adapter logic to find the location by pos reversed in map
+    string locationText;
+    vector<string> vec_matchResults;
+
+    bool found = findKeyByValueInMap(vec_matchResults, locToPos, posText);  // vector<string>& , map<string,string>, string
+
+    if (found) {
+        if (vec_matchResults.size() == 1) {
+            locationText = vec_matchResults[0];
+        }
+        else locationText = "ERROR: in this program, as loc-pos pairs are unique, only 1 result should be found";
+    }
+    else locationText = "ERROR: LOCATION NOT FOUND in posTextToLocationInMap()";
+
+    return locationText;
+}
+
+
 // Mill
 //01
 vector<string> mill01_1 = {"01", "07", "19"};
@@ -220,6 +262,9 @@ vector<vector<vector<string>>> Mill_In_Game = { mill01,
                                                 mill20,
                                                 mill21
 };
+
+
+enum Action {ACTION_NOT_SET = -1, ACTION_PLACE, ACTION_REMOVE, ACTION_MOVE, ACTION_FLY}; 
 
 
 #endif // !UTILITY_H

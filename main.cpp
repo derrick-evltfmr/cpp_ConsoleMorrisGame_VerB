@@ -33,8 +33,6 @@ void gameModeMenu();
 void aiModeMenu();
 void colorOrderModeMenu();
 
-void createOutputFile();
-
 void run();
 
 bool checkFormMill(string symbol[21], string place_piece);
@@ -55,7 +53,11 @@ struct movePiece generateFlyingPieces(string symbol[21]);
 
 string inputValueHandler(string input);
 string getStateOfTheTurn(string symbol[21]);
-void storeStateOfEachTurnInVecAndFile(string current_state_string);
+
+
+void createOutputFile();
+void storeStateOfEachTurnInVecAndFile(string current_state_string, Action current_action, 
+                                        placePiece place_info, placePiece remove_info, movePiece move_info);
 
 void displayGameBoard(string symbol[21]);
 
@@ -100,6 +102,10 @@ vector<string> game_states;
 
 // output stream
 ofstream ofs;
+
+string current_state_string; // will be initialized in the function getStateOfTheTurn
+Action current_action = ACTION_NOT_SET;
+int states_count = 0;
 
 
 //========================================================//
@@ -218,6 +224,9 @@ void run(){
     game_states.clear(); // remove all elements, size = 0
 
 
+    current_action = ACTION_NOT_SET;
+    states_count = 0;
+
     // ====================================================================================================================================//
 
 
@@ -251,6 +260,16 @@ void run(){
             // update the free pieces
             num_your_pieces--;
 
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_PLACE;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
+
             // get the last placed piece location
             string last_place_location = to_string(place_info.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -266,6 +285,15 @@ void run(){
                 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+            
             }
             
         }
@@ -307,6 +335,15 @@ void run(){
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
 
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_MOVE;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
             // get the last placed piece location
             string last_place_location = to_string(move_info.movetoPiece.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -322,6 +359,14 @@ void run(){
                 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
             }
 
             // ##########################################################
@@ -384,6 +429,16 @@ void run(){
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
 
+
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_FLY;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
             // get the last placed piece location
             string last_place_location = to_string(move_info.movetoPiece.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -399,6 +454,16 @@ void run(){
                 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
             }
 
             // ##########################################################
@@ -467,6 +532,16 @@ void run(){
             // update the free pieces
             num_opponent_pieces--;
 
+            
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_PLACE;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
             // get the last placed piece location
             string last_place_location = to_string(place_info.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -482,6 +557,16 @@ void run(){
 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
             }
         }
 
@@ -524,6 +609,15 @@ void run(){
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
 
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_MOVE;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
             // get the last placed piece location
             string last_place_location = to_string(move_info.movetoPiece.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -539,6 +633,15 @@ void run(){
 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
             }
 
             // ##########################################################
@@ -602,6 +705,16 @@ void run(){
             // place piece on board
             symbol[move_info.movetoPiece.pos] = move_info.movetoPiece.ch;
 
+
+            // ###################################################################
+            // ### Store the state when action is made (game state is changed) ###
+            // ###################################################################
+            // at the end of the turn, the piece is set, before it goes back or ends, store the state
+            current_state_string = getStateOfTheTurn(symbol);
+            current_action = ACTION_FLY;
+            storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
+
             // get the last placed piece location
             string last_place_location = to_string(move_info.movetoPiece.pos + 1);
             last_place_location = inputValueHandler(last_place_location); // handled if single digit without 0, e.g. "9" => "09"
@@ -617,6 +730,16 @@ void run(){
 
                 // set the notFormingMill_count to -1, because later after the end of the turn will ++ to 0
                 notFormingMill_count = -1;
+
+
+                // ###################################################################
+                // ### Store the state when action is made (game state is changed) ###
+                // ###################################################################
+                // at the end of the turn, the piece is set, before it goes back or ends, store the state
+                current_state_string = getStateOfTheTurn(symbol);
+                current_action = ACTION_REMOVE;
+                storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
+
             }
 
 
@@ -709,13 +832,6 @@ void run(){
     
     // display the gameboard
     displayGameBoard(symbol);
-
-    // ###################################################################
-    // ### Store the state when action is made (game state is changed) ###
-    // ###################################################################
-    // at the end of the turn, the piece is set, before it goes back or ends, store the state
-    string current_state_string = getStateOfTheTurn(symbol);
-    storeStateOfEachTurnInVecAndFile(current_state_string, current_action, place_info, remove_info, move_info);
 
 
     // ##################################################
@@ -859,7 +975,7 @@ bool checkIfAllPiecesInMill(string symbol[21]){
     else if (player_turn==OPPONENT_TURN){
         num_of_remaining_pieces = num_your_pieces - num_your_removed_pieces;
     }
-    else printf("ERROR: in checkIfAllPieces, player_turn is not YOUR or OPPONENT turn.\n");
+    else printf("ERROR: in checkIfAllPieces, player_turn is not YOUR or OPPONENT's turn.\n");
 
     string occupied_ch; // this is reversed as checkFormMillForOther, becuase you want to check the other's pieces
     if (player_turn == YOUR_TURN && player_color == YOU_WHITE_COLOR) occupied_ch = " B";
@@ -1108,7 +1224,7 @@ struct placePiece generatePlacingPiece(string symbol[21]){
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
 
 
@@ -1256,7 +1372,7 @@ struct placePiece generateRemovingPiece(string symbol[21]){
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
 
 
@@ -1434,7 +1550,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
    
 
@@ -1546,7 +1662,7 @@ struct movePiece generateMovingPieces(string symbol[21]){
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
 
     // read the input
@@ -1676,7 +1792,7 @@ struct movePiece generateFlyingPieces(string symbol[21]){
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
    
 
@@ -1770,7 +1886,7 @@ struct movePiece generateFlyingPieces(string symbol[21]){
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
-    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT TURN");
+    else printf("ERROR: player_turn is not YOUR TURN nor OPPONENT's TURN");
 
 
     // read the input
@@ -1914,7 +2030,55 @@ string getStateOfTheTurn (string symbol[21]){
 //==============================================================//
 // storeStateOfEachTurnInVecAndFile (keep track of the states ) //
 //==============================================================//
-void storeStateOfEachTurnInVecAndFile(string current_state_string){
+void storeStateOfEachTurnInVecAndFile(string current_state_string, Action current_action, 
+                                        placePiece place_info, placePiece remove_info, movePiece move_info){
+    
+    states_count++;         // original was 0, the first time would be 1
+    
+    // VECTOR PART
+    // store current state string in game states
+    game_states.push_back(current_state_string);
+
+
+    // OUTPUT FILE PART
+    string player_turn_str;
+    string player_color_str;
+    if (player_turn == YOUR_TURN) {
+        player_turn_str = "YOUR TURN";
+
+        if (player_color == YOU_WHITE_COLOR) player_color_str = "White (W)";
+        else if (player_color == YOU_BLACK_COLOR) player_color_str = "Black (B)";
+
+    }
+    else if (player_turn == OPPONENT_TURN) {
+        player_turn_str = "OPPONENT'S TURN";
+
+        if (player_color == YOU_BLACK_COLOR) player_color_str = "White (W)";        // opposite as you
+        else if (player_color == YOU_WHITE_COLOR) player_color_str = "Black (B)";
+
+    }
+    
+    ofs << "\n[[### PLAYER TURN: " << player_turn_str << " COLOR: " << player_color_str << " ###]]" << endl;
+
+    switch (current_action){
+    
+        case ACTION_PLACE:
+            string wbx_char;
+            int place_index = place_info.pos;
+            string place_location = inputValueHandler(to_string(place_index+1)); // index + 1 is the location, and convert it to 2-digit string
+
+            wbx_char = pieceCHtoWBXchar(place_info.ch);
+
+            ofs << "Place piece " << wbx_char << " at location " << place_location <<
+
+            break;
+
+    }
+
+
+    ofs << current_state_string << endl << endl;
+    
+
 
 
 }
