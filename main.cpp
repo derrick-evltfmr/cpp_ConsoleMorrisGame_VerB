@@ -1990,7 +1990,7 @@ char pieceCHtoWBXchar(string piece_ch){
         printf("\n\nERROR in pieceCHtoWBXchar, the string piece_ch is %s, but failed to get char W/B/x ", c_piece_ch );
     }
 
-
+    return WBXchar;
 }
 
 //================================================================//
@@ -2051,6 +2051,8 @@ string getStateOfTheTurn (string symbol[21]){
 
     cout << current_state_string << endl;
 
+
+    return current_state_string;
 }
 
 //==============================================================//
@@ -2084,23 +2086,70 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
 
     }
     
-    ofs << "\n[[### PLAYER TURN: " << player_turn_str << " COLOR: " << player_color_str << " ###]]" << endl;
+    ofs << "\n === STATE #" << states_count << " ===" << endl;
+    ofs << "[[### PLAYER TURN: " << player_turn_str << " COLOR: " << player_color_str << " ###]]" << endl;
 
-    switch (current_action){
+
     
-        case ACTION_PLACE:
-            string wbx_char;
-            int place_index = place_info.pos;
-            string place_location = inputValueHandler(to_string(place_index+1)); // index + 1 is the location, and convert it to 2-digit string
+    if (current_action == ACTION_PLACE) {
+        string wbx_char;
+        int place_index = place_info.pos;
+        string place_location = inputValueHandler(to_string(place_index+1)); // index + 1 is the location, and convert it to 2-digit string
 
-            wbx_char = pieceCHtoWBXchar(place_info.ch);
+        wbx_char = pieceCHtoWBXchar(place_info.ch);
 
-            ofs << "Place piece " << wbx_char << " at location " << posTextToLocationInMap(place_location) << "(" << place_location << ")"
-                                                                    << " [index" << place_index << "]" << endl;
+        ofs << "Place piece " << wbx_char << " at location " << posTextToLocationInMap(place_location) << "(" << place_location << ")"
+                                                                << " [index" << place_index << "]" << endl;
+    }
 
-            break;
+    else if (current_action == ACTION_REMOVE) {
+        string wbx_char;
+        int remove_index = remove_info.pos;
+        string remove_location = inputValueHandler(to_string(remove_index+1)); 
+
+        wbx_char = pieceCHtoWBXchar(remove_info.ch);
+
+        ofs << "Remove piece " << wbx_char << " at location " << posTextToLocationInMap(remove_location) << "(" << remove_location << ")"
+                                                                << " [index" << remove_index << "]" << endl;
 
     }
+
+    else if (current_action == ACTION_MOVE) {
+        string wbx_char;
+        int move_index = move_info.removePiece.pos;
+        string move_location = inputValueHandler(to_string(move_index+1)); 
+
+        wbx_char = pieceCHtoWBXchar(move_info.removePiece.ch); // since we move and moveto the same color, so we don't need two wbx_char
+
+        int moveto_index = move_info.movetoPiece.pos;
+        string moveto_location = inputValueHandler(to_string(moveto_index+1)); 
+
+        ofs << "Move piece " << wbx_char << " from location " << posTextToLocationInMap(move_location) << "(" << move_location << ")"
+                                                                << " [index" << move_index << "]"
+                                            << " to location " << posTextToLocationInMap(moveto_location) << "(" << moveto_location << ")"
+                                                                << " [index" << moveto_index << "]" << endl;
+
+    }
+
+    else if (current_action == ACTION_FLY) {
+        string wbx_char;
+        int fly_index = move_info.removePiece.pos;
+        string fly_location = inputValueHandler(to_string(fly_index+1)); 
+
+        wbx_char = pieceCHtoWBXchar(move_info.removePiece.ch); // since we fly and flyto the same color, so we don't need two wbx_char
+
+        int flyto_index = move_info.movetoPiece.pos;
+        string flyto_location = inputValueHandler(to_string(flyto_index+1)); 
+
+        ofs << "Fly piece " << wbx_char << " from location " << posTextToLocationInMap(fly_location) << "(" << fly_location << ")"
+                                                                << " [index" << fly_index << "]"
+                                            << " to location " << posTextToLocationInMap(flyto_location) << "(" << flyto_location << ")"
+                                                                << " [index" << flyto_index << "]" << endl;
+
+    }
+
+    else ofs << "\n ERROR: current_action is " << current_action << ", which was not handled by the 4 types actions \n" << endl;
+
 
 
     ofs << current_state_string << endl << endl;

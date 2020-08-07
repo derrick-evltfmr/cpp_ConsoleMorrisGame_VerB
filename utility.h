@@ -97,7 +97,7 @@ template<typename T1, typename T2>
 bool findKeyByValueInMap(vector<T1> & vector_of_keyType, map<T1, T2> mapOfElements, T2 value)
 {
 	bool foundKey = false;
-	iterator it = mapOfElements.begin();
+	auto it = mapOfElements.begin(); // cannot use iterator here, tried map<T1, T2>::iterator, but not allowed, so use auto instead
 
 	// Iterate through the map
 	while(it != mapOfElements.end())
