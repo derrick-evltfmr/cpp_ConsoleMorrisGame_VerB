@@ -111,6 +111,9 @@ Action current_action = ACTION_NOT_SET;
 int states_count = 0;
 
 
+int repeatedFormedMillCount = 0;
+
+
 //========================================================//
 // Extern Variables (if constant and included then may not needed)//
 //========================================================//
@@ -392,9 +395,11 @@ void run(){
             // we actually compare the current moves with last moves because we compare before updating
 
             bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
+            
+            if (repeatedMoves && repeatedFormedMillCount!=1) repeatedFormedMillCount++; // default -1, the first time 0, next time 1
 
-            // if repeatedMoves and not formedAMill
-            if (repeatedMoves && !formedAMill) {
+            // if repeatedMoves and not formedAMill and not the exception 1 turn after repeated (first time repeated=true is 0, next time repeated=true is 1)
+            if (repeatedMoves && !formedAMill && repeatedFormedMillCount!=1) {
                 // it's your turn, but you made repeated moves, so you lose
                 game_winner = OPPONENT_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
@@ -411,6 +416,9 @@ void run(){
 
                 return;
             }
+
+            // if games not end
+            if (repeatedFormedMillCount == 1) repeatedFormedMillCount = -1; // reset to -1 (initial situation)
 
             // otherwise, update the lastmoves and thismoves 
             // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
@@ -490,8 +498,10 @@ void run(){
 
             bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
 
-            // if repeatedMoves and not formedAMill
-            if (repeatedMoves && !formedAMill) {
+            if (repeatedMoves && repeatedFormedMillCount!=1) repeatedFormedMillCount++; // default -1, the first time 0, next time 1
+
+            // if repeatedMoves and not formedAMill and not the exception 1 turn after repeated (first time repeated=true is 0, next time repeated=true is 1)
+            if (repeatedMoves && !formedAMill && repeatedFormedMillCount!=1) {
                 // it's your turn, but you made repeated moves, so you lose
                 game_winner = OPPONENT_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
@@ -508,6 +518,9 @@ void run(){
 
                 return;
             }
+
+            // if games not end
+            if (repeatedFormedMillCount == 1) repeatedFormedMillCount = -1; // reset to -1 (initial situation)
 
             // otherwise, update the lastmoves and thismoves 
             // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
@@ -668,8 +681,10 @@ void run(){
 
             bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
 
-            // if repeatedMoves and not formedAMill
-            if (repeatedMoves && !formedAMill) {
+            if (repeatedMoves && repeatedFormedMillCount!=1) repeatedFormedMillCount++; // default -1, the first time 0, next time 1
+
+            // if repeatedMoves and not formedAMill and not the exception 1 turn after repeated (first time repeated=true is 0, next time repeated=true is 1)
+            if (repeatedMoves && !formedAMill && repeatedFormedMillCount!=1) {
                 // it's opponent turn, but he made repeated moves, so he loses
                 game_winner = YOU_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
@@ -686,6 +701,9 @@ void run(){
 
                 return;
             }
+            
+            // if games not end
+            if (repeatedFormedMillCount == 1) repeatedFormedMillCount = -1; // reset to -1 (initial situation)
 
             // otherwise, update the lastmoves and thismoves 
             // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
@@ -767,8 +785,10 @@ void run(){
 
             bool repeatedMoves = checkRepeatedMoves(symbol, removePiece_location, movetoPiece_location);
 
-            // if repeatedMoves and not formedAMill
-            if (repeatedMoves && !formedAMill) {
+            if (repeatedMoves && repeatedFormedMillCount!=1) repeatedFormedMillCount++; // default -1, the first time 0, next time 1
+
+            // if repeatedMoves and not formedAMill and not the exception 1 turn after repeated (first time repeated=true is 0, next time repeated=true is 1)
+            if (repeatedMoves && !formedAMill && repeatedFormedMillCount!=1) {
                 // it's opponent turn, but he made repeated moves, so he loses
                 game_winner = YOU_WIN;
                 game_winning_situation = REPEATED_WITHOUT_FORMING_A_MILL;
@@ -785,6 +805,9 @@ void run(){
 
                 return;
             }
+            
+            // if games not end
+            if (repeatedFormedMillCount == 1) repeatedFormedMillCount = -1; // reset to -1 (initial situation)
 
             // otherwise, update the lastmoves and thismoves 
             // (the first time last will be assigned to "  " because the last moves were in OPENING, which we don't care)
