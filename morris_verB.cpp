@@ -168,7 +168,7 @@ void MiniMaxGameImproved();
 int main(int argc, char* argv[]){
 
     // set console size (windows and linux are different)
-    system("echo -ne '\e[8;32;100t'");
+    system("echo '\e[8;32;100t'");
 
     
     // handle command line argument
@@ -189,16 +189,19 @@ int main(int argc, char* argv[]){
         // check whether command-line arguments are valid
         char* ifnOK = strstr(ifn, ".txt");
         char* ofnOK = strstr(ofn, ".txt");
-        int lengthOfDTS = sizeof(dts) / sizeof(dts[0]); // dts is a char array
+        int lengthOfDTS = strlen(dts); // dts is a char array, and strlen() take a c_string
         bool dtsOK = true;
         for (int i=0; i<lengthOfDTS; i++){
-            if (isdigit(dts[i])==false) dtsOK = false; // if one character fails to be digit, then false
+            if (isdigit(dts[i])==0) dtsOK = false; // if one character fails to be digit, then false
         }
 
-        if (!ifnOK) cout << "Input File [" << ifn << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
-        if (!ofnOK) cout << "Output File [" << ofn << "] does not have a .txt suffix. " << endl<< "Try Again !" << endl;
-        if (!dtsOK) cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl;
-        if (!ifnOK || !ofnOK || !dtsOK) exit(0);
+        if (!ifnOK) cout << "Input File " << ifn << " does not have a .txt suffix. " << endl;
+        if (!ofnOK) cout << "Output File " << ofn << " does not have a .txt suffix. " << endl;
+        if (!dtsOK) cout << "Depth To Be Search " << dts << " is not a valid number. " << endl;
+        if (!ifnOK || !ofnOK || !dtsOK) {
+            cout << "Try Again !" << endl << endl;
+            exit(0);
+        }
 
         // if valid convert them to string
         string temp_ifn_str(ifn);
@@ -219,7 +222,9 @@ int main(int argc, char* argv[]){
     
     }
     else {
-        cout << "The program takes 3 command-line arguments (or 0 command-line argument). Please check again." << endl;
+        cout << endl << "You have inputted " << (argc-1) << " command-line arguments." << endl;
+        cout << "The program accepts 3 command-line arguments (or 0 command-line argument) only." << endl;
+        cout << "Please check again." << endl << endl;
         exit(0);
     }
 
@@ -258,21 +263,23 @@ int main(int argc, char* argv[]){
                 string temp_ofn_str;
                 string temp_dts_str;
 
+                cout << "Enter the input file name: (with .txt file extension)" << endl;
                 cin >> temp_ifn_str;
-                int ifnOK = temp_ifn_str.find(".txt");
-                if (!ifnOK) {
-                    cout << "Input File [" << temp_ifn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
+                size_t ifnFind = temp_ifn_str.find(".txt");
+                if (ifnFind==string::npos) {
+                    cout << "Input File [" << temp_ifn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl << endl;
                     continue;
                 }
 
+                cout << "Enter the output file name: (with .txt file extension)" << endl;
                 cin >> temp_ofn_str;
-                int ofnOK = temp_ofn_str.find(".txt");
-                if (!ofnOK) {
-                    cout << "Output File [" << temp_ofn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
+                int ofnFind = temp_ofn_str.find(".txt");
+                if (ofnFind==string::npos){
+                    cout << "Output File [" << temp_ofn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl << endl;
                     continue;
                 }
                 
-                
+                cout << "Enter the depth you want to search: (number)" << endl;
                 cin >> temp_dts_str;
                 int lengthOfDTS = strlen(temp_dts_str.c_str());
                 bool dtsOK = true;
@@ -280,11 +287,11 @@ int main(int argc, char* argv[]){
                     if (isdigit(dts[i])==false) dtsOK = false; // if one character fails to be digit, then false
                 }
                 if (!dtsOK) {
-                    cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl;
+                    cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl << endl;
                     continue;
                 }
 
-                if (ifnOK && ofnOK && dtsOK) allInputOK = true;
+                if (ifnFind!=string::npos && ofnFind!=string::npos && dtsOK) allInputOK = true;
 
             }
         }
@@ -370,6 +377,8 @@ int main(int argc, char* argv[]){
         system("clear");
 
         commandLineArgumentExists = false; // set to false, because we want new values, it will ask the user to enter the values
+
+        program_mode = PROGRAM_MODE_NOT_SET; // without this, MAIN MENU WILL BE SKIPPED
 
         goto playAgain;
     }
