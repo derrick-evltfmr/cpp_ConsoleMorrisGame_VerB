@@ -13,6 +13,21 @@ using namespace std;
 #include "utility.h"
 
 //========================================================//
+// Main Menu                                              //
+//========================================================//
+void menu();
+void programModeMenu();
+ProgramMode program_mode = PROGRAM_MODE_NOT_SET;
+
+
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ############################################################### GAME PART ########################################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
+
+//========================================================//
 // Struct                                                 //
 //========================================================//
 struct placePiece {
@@ -28,12 +43,11 @@ struct movePiece {
 //========================================================//
 // Functions Prototypes                                   //
 //========================================================//
-void menu();
 void gameModeMenu();
-void aiModeMenu();
+//void aiModeMenu();
 void colorOrderModeMenu();
 
-void run();
+void game_run();
 
 bool checkFormMill(string symbol[21], string place_piece);
 bool checkFormMillForOther(string symbol[21], string place_piece);
@@ -71,7 +85,7 @@ void test();
 //========================================================//
 // handled by menus
 GameMode game_mode = GAME_MODE_NOT_SET;
-AIMode ai_mode = AI_MODE_NOT_SET;
+//AIMode ai_mode = AI_MODE_NOT_SET;
 ColorOrderMode color_order_mode = COLOR_ORDER_NOT_SET;
 PlayerTurn player_turn = TURN_NOT_DEFINED;
 PlayerColor player_color = COLOR_NOT_DEFINED;
@@ -121,13 +135,37 @@ extern const string Neighbor[][4];  // defined in utility.h
 extern const int NeighborCount[21]; // defined in utility.h
 extern map<string,string> locToPos; // defined in utility.h
 
+
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ########################################################## PROJECT REQUIREMENT PART ##############################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
+//========================================================//
+// Functions Prototypes (In the bottom of the code)       //
+//========================================================//
+
+void MiniMaxOpening();
+void MiniMaxGame();
+void ABOpening();
+void ABGame();
+void MiniMaxOpeningBlack();
+void MiniMaxGameBlack();
+void MiniMaxOpeningImproved();
+void MiniMaxGameImproved();
+
+
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ############################################################ MAIN PROGRAM ########################################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
 //========================================================//
 // Main Program                                           //
 //========================================================//
 int main(){
-    
-    // // test code
-    // test();
 
     // set console size (windows and linux are different)
     system("echo -ne '\e[8;32;100t'");
@@ -136,16 +174,54 @@ int main(){
     string restartGame;
     playAgain:
 
-    // create outputfile
-    createOutputFile();
 
     // show menu
     menu();
 
-    // run game
-	run();
+    if (program_mode == PLAY_MORRIS_GAME){
 
-    // print game result
+
+        // create outputfile
+        createOutputFile();
+
+        // run game
+        game_run();
+
+    } 
+    
+    else if (program_mode == MINIMAXOPENING){
+        MiniMaxOpening();
+    }
+
+    else if (program_mode == MINIMAXGAME){
+        MiniMaxGame();
+    }
+
+    else if (program_mode == ABOPENING){
+        ABOpening();
+    }
+    
+    else if (program_mode == ABGAME){
+        ABGame();
+    }
+
+    else if (program_mode == MINIMAXOPENINGBLACK){
+        MiniMaxOpeningBlack();
+    }
+
+    else if (program_mode == MINIMAXGAMEBLACK){
+        MiniMaxGameBlack();
+    }
+
+    else if (program_mode == MINIMAXOPENINGIMPROVED){
+        MiniMaxOpeningImproved();
+    }
+
+    else if (program_mode == MINIMAXGAMEIMPROVED){
+        MiniMaxGameImproved();
+    }
+
+    // print game result (IF THERE IS)
     // the game ends in a draw
     if (game_winner == GAME_ENDS_IN_A_DRAW){
         printf("\n\nThere has been 50 moves without forming any new mill.");
@@ -179,8 +255,9 @@ int main(){
         printf("\n\n\033[1;41mYOUR OPPONENT WINS THE GAME !!\033[0m"); // RED BACKGROUND
     }
 
+
     // after finish running the game, ask player whether to continue
-	printf("\n\nIf you want to play again Press 'Y', otherwise Press 'Any other key' to exit\n\n(Press Your Choice ...)");
+	printf("\n\nIf you want to play to go back to the menu Press 'Y', otherwise Press 'Any other key' to Exit\n\n(Press Your Choice ...)");
 	cin >> restartGame;
 	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
@@ -189,11 +266,18 @@ int main(){
     else exit(0);
 }
 
+
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ############################################################ GAME FUNCTIONS ######################################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
 //========================================================//
 // run the game                                           //
 //========================================================//
 
-void run(){
+void game_run(){
     // ====================================================================================================================================//
     //        INITIALIZE / RESET BEFORE THE GAME STARTS
     // ====================================================================================================================================//
@@ -236,7 +320,7 @@ void run(){
     current_action = ACTION_NOT_SET;
     states_count = 0;
 
-    // ====================================================================================================================================//
+    // ======================================================================================================//
 
 
 
@@ -2300,41 +2384,155 @@ void displayGameBoard(string symbol[21]){
 
 }
 
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ############################################################ MENU FUNCTIONS ######################################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
 //========================================================//
 // Menu functions                                         //
 //========================================================//
 void menu() {
     // menus
-    while (game_mode == GAME_MODE_NOT_SET){
-        gameModeMenu();
-    }
-    if (game_mode != TWO_PLAYERS_MANUAL){
-        while (ai_mode == AI_MODE_NOT_SET){
-            aiModeMenu();
-        }
-    }
-    while (color_order_mode == COLOR_ORDER_NOT_SET){
-        colorOrderModeMenu();
+
+    while (program_mode == PROGRAM_MODE_NOT_SET){
+        programModeMenu();
     }
 
-    // set turn and color
-    if (color_order_mode == YOU_WHITE_FIRST){
-        player_turn = YOUR_TURN;
-        player_color = YOU_WHITE_COLOR;
+    // if want to play morris game, go to further setting
+    if (program_mode == PLAY_MORRIS_GAME) {
+
+        while (game_mode == GAME_MODE_NOT_SET){
+            gameModeMenu();
+        }
+        // if (game_mode != TWO_PLAYERS_MANUAL){
+        //     while (ai_mode == AI_MODE_NOT_SET){
+        //         aiModeMenu();
+        //     }
+        // }
+        while (color_order_mode == COLOR_ORDER_NOT_SET){
+            colorOrderModeMenu();
+        }
+
+        // set turn and color
+        if (color_order_mode == YOU_WHITE_FIRST){
+            player_turn = YOUR_TURN;
+            player_color = YOU_WHITE_COLOR;
+        }
+        else if (color_order_mode == YOU_BLACK_FIRST){
+            player_turn = YOUR_TURN;
+            player_color = YOU_BLACK_COLOR;
+        }
+        else if (color_order_mode == OPPONENT_WHITE_FIRST){
+            player_turn = OPPONENT_TURN;
+            player_color = YOU_BLACK_COLOR;
+        }
+        else if (color_order_mode == OPPONENT_BLACK_FIRST){
+            player_turn = OPPONENT_TURN;
+            player_color = YOU_WHITE_COLOR;
+        }
     }
-    else if (color_order_mode == YOU_BLACK_FIRST){
-        player_turn = YOUR_TURN;
-        player_color = YOU_BLACK_COLOR;
-    }
-    else if (color_order_mode == OPPONENT_WHITE_FIRST){
-        player_turn = OPPONENT_TURN;
-        player_color = YOU_BLACK_COLOR;
-    }
-    else if (color_order_mode == OPPONENT_BLACK_FIRST){
-        player_turn = OPPONENT_TURN;
-        player_color = YOU_WHITE_COLOR;
-    }
+
+
 }
+
+
+void programModeMenu() {
+    string str_choice;
+    int choice = -1;
+    bool inputInvalid = false;
+
+    displayMenu:
+    system("clear");
+
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
+    cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
+    cout << ">> Please choose the Program Mode: " << endl;
+    cout << "\033[1m### Play Game: ###\033[0m" << endl;
+    cout << "[0]: Play the Morris Game Variant-B" << endl;
+    cout << "                         " << endl;
+    cout << "\033[1m### Project Part I MINIMAX: ###\033[0m" << endl;
+    cout << "[1]: MiniMaxOpening" << endl;
+    cout << "[2]: MiniMaxGame" << endl;
+    cout << "                         " << endl;
+    cout << "\033[1m### Project Part II ALPHA-BETA Pruning: ###\033[0m" << endl;
+    cout << "[3]: ABOpening" << endl;
+    cout << "[4]: ABGame" << endl;
+    cout << "                         " << endl;
+    cout << "\033[1m### Project Part III PLAY A GAME FOR BLACK: ###\033[0m" << endl;
+    cout << "[5]: MiniMaxOpeningBlack" << endl;
+    cout << "[6]: MiniMaxGameBlack" << endl;
+    cout << "                         " << endl;
+    cout << "\033[1m### Project Part IV STATIC ESTIMATION: ###\033[0m" << endl;
+    cout << "[7]: MiniMaxOpeningImproved" << endl;
+    cout << "[8]: MiniMaxGameImproved" << endl;
+
+
+
+    cout << endl << "Choice: " << endl;
+
+    if (inputInvalid){
+        // error message
+        cout << "\n\nThe input is NOT VALID, try again\n" << endl;
+    }
+    inputInvalid = false;
+
+    cin >> str_choice;
+
+    choice = stoi(str_choice); //stoi in <string>
+
+    switch(choice) {
+    case 0:
+        program_mode = PLAY_MORRIS_GAME;
+        break;
+
+    case 1:
+        program_mode = MINIMAXOPENING;
+        break;
+
+    case 2:
+        program_mode = MINIMAXGAME;
+        break;
+
+    case 3:
+        program_mode = ABOPENING;
+        break;
+
+    case 4:
+        program_mode = ABGAME;
+        break;
+
+    case 5:
+        program_mode = MINIMAXOPENINGBLACK;
+        break;
+
+    case 6:
+        program_mode = MINIMAXGAMEBLACK;
+        break;
+
+    case 7:
+        program_mode = MINIMAXOPENINGIMPROVED;
+        break;
+
+    case 8:
+        program_mode = MINIMAXGAMEIMPROVED;
+        break;
+
+
+
+    default:
+        // set input invalid
+        inputInvalid = true;
+
+        // continue to display menu
+        goto displayMenu;
+        break;
+    }
+
+}
+
 
 void gameModeMenu() {
     string str_choice;
@@ -2388,52 +2586,52 @@ void gameModeMenu() {
 
 }
 
-void aiModeMenu() {
-    string str_choice;
-    int choice = -1;
-    bool inputInvalid = false;
+// void aiModeMenu() {
+//     string str_choice;
+//     int choice = -1;
+//     bool inputInvalid = false;
 
-    displayMenu:
-    system("clear");
+//     displayMenu:
+//     system("clear");
 
-    cout << "\033[36;1m====================================================================\033[0m " << endl;
-    cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
-    cout << "\033[36;1m====================================================================\033[0m " << endl;
-    cout << ">> Please choose the AI Mode: " << endl;
-    cout << "[0] AI HINT: shows the hint result" << endl;
-    cout << "[1] AI AUTO: makes the move automatically" << endl;
+//     cout << "\033[36;1m====================================================================\033[0m " << endl;
+//     cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
+//     cout << "\033[36;1m====================================================================\033[0m " << endl;
+//     cout << ">> Please choose the AI Mode: " << endl;
+//     cout << "[0] AI HINT: shows the hint result" << endl;
+//     cout << "[1] AI AUTO: makes the move automatically" << endl;
 
-    cout << endl << "Choice: " << endl;
+//     cout << endl << "Choice: " << endl;
 
-    if (inputInvalid){
-        // error message
-        cout << "\n\nThe input is NOT VALID, try again\n" << endl;
-    }
-    inputInvalid = false;
+//     if (inputInvalid){
+//         // error message
+//         cout << "\n\nThe input is NOT VALID, try again\n" << endl;
+//     }
+//     inputInvalid = false;
 
-    cin >> str_choice;
+//     cin >> str_choice;
 
-    choice = stoi(str_choice); //stoi in <string>
+//     choice = stoi(str_choice); //stoi in <string>
 
-    switch(choice) {
-    case 0:
-        ai_mode = AI_HINT;
-        break;
+//     switch(choice) {
+//     case 0:
+//         ai_mode = AI_HINT;
+//         break;
 
-    case 1:
-        ai_mode = AI_AUTO;
-        break;
+//     case 1:
+//         ai_mode = AI_AUTO;
+//         break;
 
-    default:
-        // set input invalid
-        inputInvalid = true;
+//     default:
+//         // set input invalid
+//         inputInvalid = true;
 
-        // continue to display menu
-        goto displayMenu;
-        break;
-    }
+//         // continue to display menu
+//         goto displayMenu;
+//         break;
+//     }
 
-}
+// }
 
 void colorOrderModeMenu(){
     string str_choice;
@@ -2509,4 +2707,64 @@ void test() {
 
     string test;
     cin >> test;
+}
+
+
+//===================================================================================================================================================//
+// ##################################################################################################################################################//
+// ################################################### PROJECT REQUIREMENT RELATED FUNCTIONS ########################################################//
+// ##################################################################################################################################################//
+//===================================================================================================================================================//
+
+void MiniMaxOpening(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+
+    cout << "IN MiniMaxOpening" << endl;
+}
+void MiniMaxGame(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+
+    cout << "IN MiniMaxGame" << endl;
+}
+
+void ABOpening(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN ABOpening" << endl;
+}
+void ABGame(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN ABGame" << endl;
+}
+
+void MiniMaxOpeningBlack(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN MiniMaxOpeningBlack" << endl;
+}
+void MiniMaxGameBlack(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN MiniMaxGameBlack" << endl;
+}
+void MiniMaxOpeningImproved(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN MiniMaxOpeningImproved" << endl;
+}
+void MiniMaxGameImproved(){
+    // reset game winning variables
+    game_winner = WINNER_NOT_SET;
+    game_winning_situation = WINNING_SITUATION_NOT_SET;
+    cout << "IN MiniMaxGameImproved" << endl;
 }
