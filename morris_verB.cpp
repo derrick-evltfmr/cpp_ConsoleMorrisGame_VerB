@@ -126,6 +126,9 @@ int main(){
     // // test code
     // test();
 
+    // set console size (windows and linux are different)
+    system("echo -ne '\e[8;32;100t'");
+
     // start or restart
     string restartGame;
     playAgain:
