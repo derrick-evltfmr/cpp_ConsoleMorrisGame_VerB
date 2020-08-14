@@ -2133,7 +2133,9 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
         int move_index = move_info.removePiece.pos;
         string move_location = inputValueHandler(to_string(move_index+1)); 
 
-        wbx_char = pieceCHtoWBXchar(move_info.removePiece.ch); // since we move and moveto the same color, so we don't need two wbx_char
+        wbx_char = pieceCHtoWBXchar(move_info.movetoPiece.ch); // since we move and moveto the same color, so we don't need two wbx_char
+                                                                // but we want movetoPiece.ch, that's the color
+                                                                // removePiece.ch is the number index that we removed and stored back
 
         int moveto_index = move_info.movetoPiece.pos;
         string moveto_location = inputValueHandler(to_string(moveto_index+1)); 
@@ -2150,7 +2152,9 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
         int fly_index = move_info.removePiece.pos;
         string fly_location = inputValueHandler(to_string(fly_index+1)); 
 
-        wbx_char = pieceCHtoWBXchar(move_info.removePiece.ch); // since we fly and flyto the same color, so we don't need two wbx_char
+        wbx_char = pieceCHtoWBXchar(move_info.movetoPiece.ch); // since we fly and flyto the same color, so we don't need two wbx_char
+                                                                // but we want movetoPiece.ch, that's the color
+                                                                // removePiece.ch is the number index that we removed and stored back
 
         int flyto_index = move_info.movetoPiece.pos;
         string flyto_location = inputValueHandler(to_string(flyto_index+1)); 
