@@ -263,7 +263,7 @@ int main(int argc, char* argv[]){
                 string temp_ofn_str;
                 string temp_dts_str;
 
-                cout << "Enter the input file name: (with .txt file extension)" << endl;
+                cout << endl << "Enter the input file name: (with .txt file extension)" << endl;
                 cin >> temp_ifn_str;
                 size_t ifnFind = temp_ifn_str.find(".txt");
                 if (ifnFind==string::npos) {
@@ -271,7 +271,7 @@ int main(int argc, char* argv[]){
                     continue;
                 }
 
-                cout << "Enter the output file name: (with .txt file extension)" << endl;
+                cout << endl << "Enter the output file name: (with .txt file extension)" << endl;
                 cin >> temp_ofn_str;
                 int ofnFind = temp_ofn_str.find(".txt");
                 if (ofnFind==string::npos){
@@ -279,12 +279,12 @@ int main(int argc, char* argv[]){
                     continue;
                 }
                 
-                cout << "Enter the depth you want to search: (number)" << endl;
+                cout << endl << "Enter the depth you want to search: (number)" << endl;
                 cin >> temp_dts_str;
                 int lengthOfDTS = strlen(temp_dts_str.c_str());
                 bool dtsOK = true;
                 for (int i=0; i<lengthOfDTS; i++){
-                    if (isdigit(dts[i])==false) dtsOK = false; // if one character fails to be digit, then false
+                    if (isdigit(temp_dts_str[i])==false) dtsOK = false; // if one character fails to be digit, then false
                 }
                 if (!dtsOK) {
                     cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl << endl;
@@ -371,7 +371,7 @@ int main(int argc, char* argv[]){
 
 
     // after finish running the game, ask player whether to continue
-	printf("\n\nIf you want to play to go back to the menu Press 'Y', otherwise Press 'Any other key' to Exit\n\n(Press Your Choice ...)");
+	printf("\n\nIf you want to play to go back to the menu Enter 'Y'/'y', otherwise Enter 'Any other key' to Exit\n\n(Enter Your Choice ...)   ");
 	cin >> restartGame;
 	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
