@@ -60,6 +60,8 @@ void createOutputFile();
 void storeStateOfEachTurnInVecAndFile(string current_state_string, Action current_action, 
                                         placePiece place_info, placePiece remove_info, movePiece move_info);
 
+
+string colorDecorator(string original_str);
 void displayGameBoard(string symbol[21]);
 
 void test();
@@ -1172,26 +1174,26 @@ struct placePiece generatePlacingPiece(string symbol[21]){
 
         //if (your_game_phrase == OPENING){ // MUST BE OPENING WHEN ENTERING HERE
             if (player_color == YOU_WHITE_COLOR){
-                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\n\033[1m[[### YOUR TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 
-                printf("\nEnter Your Choice To ||PLACE|| [White] (W): ");
+                printf("\nEnter Your Choice To ||PLACE|| \033[1;97;100m[White] (W)\033[0m: ");
             }
             else if (player_color == YOU_BLACK_COLOR){
-                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\n\033[1m[[### YOUR TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 
-                printf("\nEnter Your Choice To ||PLACE|| [Black] (B): ");
+                printf("\nEnter Your Choice To ||PLACE|| \033[1;30;47m[Black] (B)\033[0m: ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -1201,26 +1203,26 @@ struct placePiece generatePlacingPiece(string symbol[21]){
 
         //if (your_game_phrase == OPENING){
             if (player_color == YOU_BLACK_COLOR){
-                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 
-                printf("\nEnter Opponent Choice To ||PLACE|| [White] (W): ");
+                printf("\nEnter Opponent Choice To ||PLACE|| \033[1;97;100m[White] (W)\033[0m: ");
             }
             else if (player_color == YOU_WHITE_COLOR){
-                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 
-                printf("\nEnter Opponent Choice To ||PLACE|| [Black] (B): ");
+                printf("\nEnter Opponent Choice To ||PLACE|| \033[1;30;47m[Black] (B)\033[0m: ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -1296,38 +1298,38 @@ struct placePiece generateRemovingPiece(string symbol[21]){
 
         //if (your_game_phrase == OPENING){ // MUST BE OPENING WHEN ENTERING HERE
             if (player_color == YOU_WHITE_COLOR){
-                printf("\nA Mill is Formed !! You can remove one of your opponent piece !!");
+                printf("\n\033[1;33mA Mill is Formed !! You can remove one of your opponent piece !!\033[0m");
 
-                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\n\033[1m[[### YOUR TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 if (cannotRemoveMillError){
-                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cout << "\n\033[1;31mYou cannot remove a piece which is in a mill, try to remove another\033[0m" << endl;
                     cannotRemoveMillError = false;
                 }
                 
-                printf("\nEnter Your Choice To ||REMOVE|| [Black] (B): ");
+                printf("\nEnter Your Choice To ||REMOVE|| \033[1;30;47m[Black] (B)\033[0m: ");
             }
             else if (player_color == YOU_BLACK_COLOR){
-                printf("\nA Mill is Formed !! You can remove one of your opponent piece !!");
+                printf("\n\033[1;33mA Mill is Formed !! You can remove one of your opponent piece !!\033[0m");
 
-                printf("\n\n[[### YOUR TURN ###]]");
+                printf("\n\n\033[1m[[### YOUR TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 if (cannotRemoveMillError){
-                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cout << "\n\033[1;31mYou cannot remove a piece which is in a mill, try to remove another\033[0m" << endl;
                     cannotRemoveMillError = false;
                 }
                 
-                printf("\nEnter Your Choice To ||REMOVE|| [White] (W): ");
+                printf("\nEnter Your Choice To ||REMOVE|| \033[1;97;100m[White] (W)\033[0m: ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -1337,38 +1339,38 @@ struct placePiece generateRemovingPiece(string symbol[21]){
 
         //if (your_game_phrase == OPENING){
             if (player_color == YOU_BLACK_COLOR){
-                printf("\nA Mill is Formed !! Your opponent can remove one of your piece !!");
+                printf("\n\033[1;33mA Mill is Formed !! Your opponent can remove one of your piece !!\033[0m");
 
-                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 if (cannotRemoveMillError){
-                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cout << "\n\033[1;31mYou cannot remove a piece which is in a mill, try to remove another\033[0m" << endl;
                     cannotRemoveMillError = false;
                 }
                 
-                printf("\nEnter Opponent Choice To ||REMOVE|| [Black] (B): ");
+                printf("\nEnter Opponent Choice To ||REMOVE|| \033[1;30;47m[Black] (B)\033[0m: ");
             }
             else if (player_color == YOU_WHITE_COLOR){
-                printf("\nA Mill is Formed !! Your opponent can remove one of your piece !!");
+                printf("\n\033[1;33mA Mill is Formed !! Your opponent can remove one of your piece !!\033[0m");
 
-                printf("\n\n[[### OPPONENT'S TURN ###]]");
+                printf("\n\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
                                 
                 // error message
                 if (inputInvalid){
-                    cout << "\nThe input is NOT VALID, try again" << endl;
+                    cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                     inputInvalid = false;
                 }
                 if (cannotRemoveMillError){
-                    cout << "\nYou cannot remove a piece which is in a mill, try to remove another" << endl;
+                    cout << "\n\033[1;31mYou cannot remove a piece which is in a mill, try to remove another\033[0m" << endl;
                     cannotRemoveMillError = false;
                 }
                 
-                printf("\nEnter Opponent Choice To ||REMOVE|| [White] (W): ");
+                printf("\nEnter Opponent Choice To ||REMOVE|| \033[1;97;100m[White] (W)\033[0m: ");
             }
             else printf("ERROR: player_color is not WHITE nor BLACK");
         //}
@@ -1485,34 +1487,34 @@ struct movePiece generateMovingPieces(string symbol[21]){
     if (player_turn == YOUR_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
-            printf("\n[[### YOUR TURN ###]]");
+            printf("\n\033[1m[[### YOUR TURN ###]]\033[0m");
                         
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             if (noAvailableNeighbors){
-                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                cout << "\n\033[1;31mThere is no available neighbors for the piece you just chose, try another\033[0m" << endl;
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Your Choice To ||MOVE|| [White] (W): ");
+            printf("\nEnter Your Choice To ||MOVE|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_BLACK_COLOR){
-            printf("\n[[### YOUR TURN ###]]");
+            printf("\n\033[1m[[### YOUR TURN ###]]\033[0m");
                         
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             if (noAvailableNeighbors){
-                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                cout << "\n\033[1;31mThere is no available neighbors for the piece you just chose, try another\033[0m" << endl;
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Your Choice To ||MOVE|| [Black] (B): ");
+            printf("\nEnter Your Choice To ||MOVE|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1520,34 +1522,34 @@ struct movePiece generateMovingPieces(string symbol[21]){
     else if (player_turn == OPPONENT_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
-            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
 
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             if (noAvailableNeighbors){
-                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                cout << "\n\033[1;31mThere is no available neighbors for the piece you just chose, try another\033[0m" << endl;
                 noAvailableNeighbors = false;
             }
 
-            printf("\nEnter Opponent Choice To ||MOVE|| [White] (W): ");
+            printf("\nEnter Opponent Choice To ||MOVE|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_WHITE_COLOR){
-            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
             
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             if (noAvailableNeighbors){
-                cout << "\nThere is no available neighbors for the piece you just chose, try another" << endl;
+                cout << "\n\033[1;31mThere is no available neighbors for the piece you just chose, try another\033[0m" << endl;
                 noAvailableNeighbors = false;
             }
             
-            printf("\nEnter Opponent Choice To ||MOVE|| [Black] (B): ");
+            printf("\nEnter Opponent Choice To ||MOVE|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1642,11 +1644,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To ||MOVETO|| [White] (W): ");
+            printf("\nEnter Your Choice To ||MOVETO|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Your Choice To ||MOVETO|| [Black] (B): ");
+            printf("\nEnter Your Choice To ||MOVETO|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1655,11 +1657,11 @@ struct movePiece generateMovingPieces(string symbol[21]){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To ||MOVETO|| [White] (W): ");
+            printf("\nEnter Opponent Choice To ||MOVETO|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_WHITE_COLOR){
             printf("\n");
-            printf("\nEnter Opponent Choice To ||MOVETO|| [Black] (B): ");
+            printf("\nEnter Opponent Choice To ||MOVETO|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1743,26 +1745,26 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     if (player_turn == YOUR_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
-            printf("\n[[### YOUR TURN ###]]");
+            printf("\n\033[1m[[### YOUR TURN ###]]\033[0m");
                         
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             
-            printf("\nEnter Your Choice To ||FLY|| [White] (W): ");
+            printf("\nEnter Your Choice To ||FLY|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_BLACK_COLOR){
-            printf("\n[[### YOUR TURN ###]]");
+            printf("\n\033[1m[[### YOUR TURN ###]]\033[0m");
                         
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             
-            printf("\nEnter Your Choice To ||FLY|| [Black] (B): ");
+            printf("\nEnter Your Choice To ||FLY|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1770,26 +1772,26 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     else if (player_turn == OPPONENT_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
-            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
 
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
 
-            printf("\nEnter Opponent Choice To ||FLY|| [White] (W): ");
+            printf("\nEnter Opponent Choice To ||FLY|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_WHITE_COLOR){
-            printf("\n[[### OPPONENT'S TURN ###]]");
+            printf("\n\033[1m[[### OPPONENT'S TURN ###]]\033[0m");
             
             // print error messages if applied
             if (inputInvalid){
-                cout << "\nThe input is NOT VALID, try again" << endl;
+                cout << "\n\033[1;31mThe input is NOT VALID, try again\033[0m" << endl;
                 inputInvalid = false;
             }
             
-            printf("\nEnter Opponent Choice To ||FLY|| [Black] (B): ");
+            printf("\nEnter Opponent Choice To ||FLY|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1869,10 +1871,10 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     if (player_turn == YOUR_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_WHITE_COLOR){
-            printf("\nEnter Your Choice To ||FLYTO|| [White] (W): ");
+            printf("\nEnter Your Choice To ||FLYTO|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_BLACK_COLOR){
-            printf("\nEnter Your Choice To ||FLYTO|| [Black] (B): ");
+            printf("\nEnter Your Choice To ||FLYTO|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -1880,10 +1882,10 @@ struct movePiece generateFlyingPieces(string symbol[21]){
     else if (player_turn == OPPONENT_TURN){
         // MUST BE MIDGAME
         if (player_color == YOU_BLACK_COLOR){
-            printf("\nEnter Opponent Choice To ||FLYTO|| [White] (W): ");
+            printf("\nEnter Opponent Choice To ||FLYTO|| \033[1;97;100m[White] (W)\033[0m: ");
         }
         else if (player_color == YOU_WHITE_COLOR){
-            printf("\nEnter Opponent Choice To ||FLYTO|| [Black] (B): ");
+            printf("\nEnter Opponent Choice To ||FLYTO|| \033[1;30;47m[Black] (B)\033[0m: ");
         }
         else printf("ERROR: player_color is not WHITE nor BLACK");
     }
@@ -2176,8 +2178,22 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
 
 
 
+//==============================================================//
+// colorDecorator (to process the color of some defined string) //
+//==============================================================//
+string colorDecorator(string original_str){
+    string colored_text;
 
+    if (original_str == " W"){
+        colored_text = "\033[1;97;100m W\033[0m";
+    }
+    else if (original_str == " B"){
+        colored_text = "\033[1;30;47m B\033[0m";
+    }
+    else colored_text = original_str; // if not defined, then unchanged
 
+    return colored_text;
+}
 
 
 //========================================================//
@@ -2185,15 +2201,24 @@ void storeStateOfEachTurnInVecAndFile(string current_state_string, Action curren
 //========================================================//
 
 void displayGameBoard(string symbol[21]){
+
+    // make a temp symbol array to store the color display
+    string symbol_color[21];
+    for (int i=0; i<21; i++){
+        symbol_color[i] = colorDecorator(symbol[i]);
+    }
+
+
+
 	system("clear"); // different console command may vary
 
     // cout << symbol[0] << endl;
     // printf("%s\n",symbol[0].c_str());     
     // ### Note that printf expect char*, not string, have to use .c_str() or .data() to extract, otherwise wrong result
 
-	printf("=====================================================================================\n");
-	printf("\t\t         Nine Men's Morris Game Variant-B");
-    printf("\n=====================================================================================\n");
+	printf("\033[36;1m=====================================================================================\033[0m\n");
+	printf("\033[36;1m\t\t         Nine Men's Morris Game Variant-B\033[0m");
+    printf("\033[36;1m\n=====================================================================================\033[0m\n");
 
     printf("// GAMEBOARD INPUT FORMAT => '01' (or '1') / 'A0' (or 'a0') to represent the bottom-left corner //\n");
 
@@ -2231,19 +2256,19 @@ void displayGameBoard(string symbol[21]){
     }
     
 	printf("\n\t\t\t");
-	printf("\n\t      \t  6     %s-------------%s-------------%s",symbol[18].c_str(),symbol[19].c_str(),symbol[20].c_str());
+	printf("\n\t      \t  6     %s-------------%s-------------%s",symbol_color[18].c_str(),symbol_color[19].c_str(),symbol_color[20].c_str());
 	printf("\n\t      \t         |              |              |");
-	printf("\n\t      \t  5      |   %s--------%s--------%s    |",symbol[15].c_str(),symbol[16].c_str(),symbol[17].c_str());
+	printf("\n\t      \t  5      |   %s--------%s--------%s    |",symbol_color[15].c_str(),symbol_color[16].c_str(),symbol_color[17].c_str());
 	printf("\n\t      \t         |    |         |         |    |");
-	printf("\n\t      \t  4      |    |   %s---%s---%s    |    |",symbol[12].c_str(),symbol[13].c_str(),symbol[14].c_str());
+	printf("\n\t      \t  4      |    |   %s---%s---%s    |    |",symbol_color[12].c_str(),symbol_color[13].c_str(),symbol_color[14].c_str());
 	printf("\n\t      \t         |    |    |         |    |    |");
-   	printf("\n\t      \t  3     %s---%s---%s        %s---%s---%s",symbol[6].c_str(),symbol[7].c_str(),symbol[8].c_str(),symbol[9].c_str(),symbol[10].c_str(),symbol[11].c_str());
+   	printf("\n\t      \t  3     %s---%s---%s        %s---%s---%s",symbol_color[6].c_str(),symbol_color[7].c_str(),symbol_color[8].c_str(),symbol_color[9].c_str(),symbol_color[10].c_str(),symbol_color[11].c_str());
 	printf("\n\t      \t         |    |    |         |    |    |");
-	printf("\n\t      \t  2      |    |   %s--------%s    |    |",symbol[4].c_str(),symbol[5].c_str());
+	printf("\n\t      \t  2      |    |   %s--------%s    |    |",symbol_color[4].c_str(),symbol_color[5].c_str());
 	printf("\n\t      \t         |    | /                 |    |");
-	printf("\n\t      \t  1      |   %s------------------%s    |",symbol[2].c_str(),symbol[3].c_str());
+	printf("\n\t      \t  1      |   %s------------------%s    |",symbol_color[2].c_str(),symbol_color[3].c_str());
     printf("\n\t      \t         |  /                          |");
-	printf("\n\t      \t  0     %s----------------------------%s",symbol[0].c_str(),symbol[1].c_str());
+	printf("\n\t      \t  0     %s----------------------------%s",symbol_color[0].c_str(),symbol_color[1].c_str());
     printf("\n\n");
     printf("\n\t\t \t A    B    C    D    E    F    G \n");
 
@@ -2293,9 +2318,9 @@ void gameModeMenu() {
     displayMenu:
     system("clear");
 
-    cout << "==================================================================== " << endl;
-    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
-    cout << "==================================================================== " << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
+    cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
     cout << ">> Please choose the Game Mode: " << endl;
     cout << "[0]: 2 Players Manual Mode" << endl;
     cout << "[1]: AI helper Mode" << endl;
@@ -2345,9 +2370,9 @@ void aiModeMenu() {
     displayMenu:
     system("clear");
 
-    cout << "==================================================================== " << endl;
-    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
-    cout << "==================================================================== " << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
+    cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
     cout << ">> Please choose the AI Mode: " << endl;
     cout << "[0] AI HINT: shows the hint result" << endl;
     cout << "[1] AI AUTO: makes the move automatically" << endl;
@@ -2393,9 +2418,9 @@ void colorOrderModeMenu(){
     displayMenu:
     system("clear");
     
-    cout << "==================================================================== " << endl;
-    cout << "|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || " << endl;
-    cout << "==================================================================== " << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
+    cout << "\033[36;1m|| ############   NINE MEN'S MORRIS GAME VARIANT-B   ############ || \033[0m" << endl;
+    cout << "\033[36;1m====================================================================\033[0m " << endl;
     cout << ">> Please choose your piece color and the order: " << endl;
     cout << "[0] You choose WHITE, and You move FIRST (default)" << endl;
     cout << "[1] You choose BLACK, and You move FIRST" << endl;
