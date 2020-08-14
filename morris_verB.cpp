@@ -1966,10 +1966,7 @@ string inputValueHandler(string input){
             string location; 
             location.push_back(c_0);
             location.push_back(c_1);
-            
-            cout << "LINE1965 c_0: " << c_0 << endl;
-            cout << "LINE1966 c_1: " << c_1 << endl;
-            cout << "LINE1967 location: " << location << endl;
+
             return locToPos[location];
         }
 
@@ -2198,7 +2195,7 @@ void displayGameBoard(string symbol[21]){
 	printf("\t\t         Nine Men's Morris Game Variant-B");
     printf("\n=====================================================================================\n");
 
-    printf("// GAMEBOARD INPUT FORMAT => '01' or '1' or 'A0' to represent the bottom-left corner //\n");
+    printf("// GAMEBOARD INPUT FORMAT => '01' (or '1') / 'A0' (or 'a0') to represent the bottom-left corner //\n");
 
     // remaining pieces
     int num_your_remaining_pieces = 9 - num_your_removed_pieces; 
