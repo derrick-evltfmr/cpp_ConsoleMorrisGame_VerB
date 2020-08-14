@@ -165,10 +165,65 @@ void MiniMaxGameImproved();
 //========================================================//
 // Main Program                                           //
 //========================================================//
-int main(){
+int main(int argc, char* argv[]){
 
     // set console size (windows and linux are different)
     system("echo -ne '\e[8;32;100t'");
+
+    
+    // handle command line argument
+    bool commandLineArgumentExists = true; // by default
+    char ifn[255],ofn[255],dts[255]; 
+
+    string inputFileName = "Input File Name Not Defined";
+    string outputFileName = "Output File Name Not Defined";
+    int depthNeededToBeSearched = -1; // "Depth Of The Tree Needed To Be Searched Not Defined"
+
+    if (argc==4){ // 3 + 1
+
+        // get command-line arguments
+        strcpy(ifn,argv[1]); 
+        strcpy(ofn,argv[2]); 
+        strcpy(dts,argv[3]); 
+        
+        // check whether command-line arguments are valid
+        char* ifnOK = strstr(ifn, ".txt");
+        char* ofnOK = strstr(ofn, ".txt");
+        int lengthOfDTS = sizeof(dts) / sizeof(dts[0]); // dts is a char array
+        bool dtsOK = true;
+        for (int i=0; i<lengthOfDTS; i++){
+            if (isdigit(dts[i])==false) dtsOK = false; // if one character fails to be digit, then false
+        }
+
+        if (!ifnOK) cout << "Input File [" << ifn << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
+        if (!ofnOK) cout << "Output File [" << ofn << "] does not have a .txt suffix. " << endl<< "Try Again !" << endl;
+        if (!dtsOK) cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl;
+        if (!ifnOK || !ofnOK || !dtsOK) exit(0);
+
+        // if valid convert them to string
+        string temp_ifn_str(ifn);
+        string temp_ofn_str(ofn);
+        string temp_dts_str(dts);
+        
+        inputFileName = temp_ifn_str;
+        outputFileName = temp_ofn_str;
+        depthNeededToBeSearched = stoi(temp_dts_str);
+
+        cout << "Input File Name: " << inputFileName;
+        cout << "Output File Name: "<< outputFileName;
+        cout << "Depth to Search: " << depthNeededToBeSearched; // integer
+    }
+    else if (argc == 1) { // 0 + 1 (the program name is counted as one argument)
+
+        commandLineArgumentExists = false; // do nothing but set commandLineArgumentExists to false
+    
+    }
+    else {
+        cout << "The program takes 3 command-line arguments (or 0 command-line argument). Please check again." << endl;
+        exit(0);
+    }
+
+
 
     // start or restart
     string restartGame;
@@ -177,6 +232,9 @@ int main(){
 
     // show menu
     menu();
+
+
+    // actions after choosing menu options
 
     if (program_mode == PLAY_MORRIS_GAME){
 
@@ -187,39 +245,88 @@ int main(){
         // run game
         game_run();
 
-    } 
+    }
+
+    else {
+        // if no command-line argument or restart
+        if (commandLineArgumentExists == false){
+            
+            bool allInputOK = false;
+
+            while (allInputOK==false){
+                string temp_ifn_str;
+                string temp_ofn_str;
+                string temp_dts_str;
+
+                cin >> temp_ifn_str;
+                int ifnOK = temp_ifn_str.find(".txt");
+                if (!ifnOK) {
+                    cout << "Input File [" << temp_ifn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
+                    continue;
+                }
+
+                cin >> temp_ofn_str;
+                int ofnOK = temp_ofn_str.find(".txt");
+                if (!ofnOK) {
+                    cout << "Output File [" << temp_ofn_str << "] does not have a .txt suffix. " << endl << "Try Again !" << endl;
+                    continue;
+                }
+                
+                
+                cin >> temp_dts_str;
+                int lengthOfDTS = strlen(temp_dts_str.c_str());
+                bool dtsOK = true;
+                for (int i=0; i<lengthOfDTS; i++){
+                    if (isdigit(dts[i])==false) dtsOK = false; // if one character fails to be digit, then false
+                }
+                if (!dtsOK) {
+                    cout << "Depth Of The Tree Needed To Be Search [" << dts << "] is not a valid number. " << endl<< "Try Again !" << endl;
+                    continue;
+                }
+
+                if (ifnOK && ofnOK && dtsOK) allInputOK = true;
+
+            }
+        }
+        
+
+
+        if (program_mode == MINIMAXOPENING){
+            MiniMaxOpening();
+        }
+
+        else if (program_mode == MINIMAXGAME){
+            MiniMaxGame();
+        }
+
+        else if (program_mode == ABOPENING){
+            ABOpening();
+        }
+        
+        else if (program_mode == ABGAME){
+            ABGame();
+        }
+
+        else if (program_mode == MINIMAXOPENINGBLACK){
+            MiniMaxOpeningBlack();
+        }
+
+        else if (program_mode == MINIMAXGAMEBLACK){
+            MiniMaxGameBlack();
+        }
+
+        else if (program_mode == MINIMAXOPENINGIMPROVED){
+            MiniMaxOpeningImproved();
+        }
+
+        else if (program_mode == MINIMAXGAMEIMPROVED){
+            MiniMaxGameImproved();
+        }
+
+
+    }
     
-    else if (program_mode == MINIMAXOPENING){
-        MiniMaxOpening();
-    }
-
-    else if (program_mode == MINIMAXGAME){
-        MiniMaxGame();
-    }
-
-    else if (program_mode == ABOPENING){
-        ABOpening();
-    }
     
-    else if (program_mode == ABGAME){
-        ABGame();
-    }
-
-    else if (program_mode == MINIMAXOPENINGBLACK){
-        MiniMaxOpeningBlack();
-    }
-
-    else if (program_mode == MINIMAXGAMEBLACK){
-        MiniMaxGameBlack();
-    }
-
-    else if (program_mode == MINIMAXOPENINGIMPROVED){
-        MiniMaxOpeningImproved();
-    }
-
-    else if (program_mode == MINIMAXGAMEIMPROVED){
-        MiniMaxGameImproved();
-    }
 
     // print game result (IF THERE IS)
     // the game ends in a draw
@@ -261,6 +368,9 @@ int main(){
 	cin >> restartGame;
 	if(restartGame == "Y" || restartGame == "y"){
         system("clear");
+
+        commandLineArgumentExists = false; // set to false, because we want new values, it will ask the user to enter the values
+
         goto playAgain;
     }
     else exit(0);
